@@ -32,6 +32,17 @@ The CLONEME files use three literal placeholder tokens. The clone replaces all t
   single token cannot serve both, and `#Rampart-epms` is not a channel
 - `{{DOMAIN}}`   → the DOMAIN input (e.g. `Insurance`)
 
+There is a fourth token, and it is the one exception to everything below:
+
+- `{{INSTRUCTIONS_DOC_URL}}` → **deliberately NOT substituted by this skill.** It sits in the EPM
+  Training doc's "Instructions Doc" line. This skill runs at step 7; the writer instructions doc does
+  not exist until step 12, so there is nothing to substitute yet. It is filled by the step-14 link
+  pass (`replace-instructions-link`). Leaving it as a token rather than `[TBD]` is deliberate: a
+  token is machine-findable, so the link pass can fill it, and a `[TBD]` is only findable by a human.
+
+**So the verify rule is "no `{{` tokens left EXCEPT `{{INSTRUCTIONS_DOC_URL}}`."** Do not "fix" that
+one, and do not report it as a defect at step 7. Report it as a defect only if it survives step 14.
+
 Top folder name convention: **`{{DOMAIN}} (Project {{VERTICAL}})`** → e.g. `Insurance (Project Rampart)`.
 
 ## CLONEME source tree (do NOT edit these — they are the template)
@@ -241,10 +252,11 @@ Live core-team shares, all confirmed present 2026-07-29 (PT):
 ## Verify
 
 List children of the new top folder and each subfolder; confirm 6 folders + 5 docs/sheets +
-2 forms, all titled with the vertical name and no `{{` tokens left in titles or bodies.
+2 forms, all titled with the vertical name and no `{{` tokens left in titles or bodies, with the
+single deliberate exception of `{{INSTRUCTIONS_DOC_URL}}` in the EPM Training doc (see Token model).
 
 Grep for `_LOWER}}` specifically as well as `{{`. A stray `Rampart_LOWER}}` means step 4 replaced
-the tokens in the wrong order.
+the tokens in the wrong order. `{{INSTRUCTIONS_DOC_URL}}` surviving is CORRECT at this step.
 
 **Titles are not enough, and reporting on titles alone is how this skill shipped a broken doc.**
 Also confirm, by READING each copied Doc and Sheet: zero mentions of any other live vertical, zero

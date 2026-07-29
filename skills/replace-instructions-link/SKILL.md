@@ -176,6 +176,12 @@ Report the remaining-TBD count into this skill's scorecard.
   `includeItemsFromAllDrives`, `supportsAllDrives` and `corpora: allDrives`. Run it once per
   inherited id. Then keep only the files under this vertical's folder id from input 6, and list the
   rest as a cross-vertical leak, report-only.
+- **Also search for the literal token `{{INSTRUCTIONS_DOC_URL}}`, not just doc ids.** Since
+  2026-07-29 the clone template carries that token instead of a live vertical's link (surface 6), so a
+  freshly cloned vertical's EPM Training doc holds the token, not a stale id. An id-only search
+  MISSES it and the token sits there forever. This surface is the only thing that fills it, and
+  `new-vertical-drive-folder` deliberately leaves it alone at step 7 because the instructions doc does
+  not exist yet. If this surface is skipped, the vertical's EPM doc never gets a link at all.
 - Replace: Docs via `docs.documents.batchUpdate` `replaceAllText` on the doc-id substring. Sheets via
   `sheets.spreadsheets.batchUpdate` `findReplace`. The EPM Training doc is the usual hit.
 - Verify: re-run the same search and confirm this vertical's files no longer appear.
@@ -185,12 +191,20 @@ Report the remaining-TBD count into this skill's scorecard.
 `{{VERTICAL}} EPM Training`, `1WJbvFBSQ-ViMPq4Css43GNCmrdnfTpPd8uGpq4JqAac`, inside
 `[INT] Project {{VERTICAL}}` in `_CLONEME (New Vertical Template)`.
 
-It carries a live vertical's instructions link, so every future spinup inherits it. The template must
-point at **no** vertical: replace the link with the literal `{{INSTRUCTIONS_DOC_URL}}` token so
-`new-vertical-drive-folder` treats it like the other placeholders and the gap is visible instead of
-silently wrong.
+It carried a live vertical's instructions link, so every future spinup inherited it. **DONE
+2026-07-29:** the whole doc was tokenized and that line now reads
+`{{VERTICAL}} Instructions Doc: {{INSTRUCTIONS_DOC_URL}}`. The template points at no vertical.
 
-Verify: `fullText contains` each of the four ids returns zero template files.
+Ryu chose the token over a `[TBD]` deliberately: a token is machine-findable, so surface 5 can fill it
+in each cloned vertical, whereas a `[TBD]` is only findable by a human. `new-vertical-drive-folder`
+therefore does NOT substitute this one token at step 7 and its verify rule carries an explicit
+exception for it.
+
+On a re-run, check this surface rather than assuming: if the template already carries the token there
+is nothing to do here, and the work is all in surface 5.
+
+Verify: `fullText contains` each of the four ids returns zero template files, and the template's
+Instructions Doc line still holds the token.
 
 ### Out of scope: listings
 
