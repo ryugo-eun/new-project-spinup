@@ -2,7 +2,7 @@
 name: create-vertical-canvases
 description: >
   Create the full Slack channel-canvas set for a NEW Sparta vertical by cloning the canonical
-  Abacus 13-canvas set into the vertical's Slack workspace and adapting each: title prefixed with
+  Abacus 15-canvas set into the vertical's Slack workspace and adapting each: title prefixed with
   the vertical name, domain wording swapped, every channel mention repointed to the vertical's
   channels, SVA dashboard + Insightful timer set, and every vertical-specific link left as an
   explicit TBD (never invented). Use when standing up a new Sparta vertical whose channels have no
@@ -42,7 +42,10 @@ id, and domain).
 
 ## Source set (read these, workspace `Abacus`)
 
-The 13 canonical canvases + their Abacus source IDs live in the Abacus table of
+**The canonical set is 15** (settled 2026-07-29). It was 13; the Reviewer Roster and Weekly
+Availability canvases were built on Cadre first and are now part of the default set. Create all 15.
+
+The canonical canvases + their Abacus source IDs live in the Abacus table of
 [../editing-channel-canvases/reference/canvas-registry.md](../editing-channel-canvases/reference/canvas-registry.md).
 Read each source canvas, then create the adapted copy. The set, by target channel:
 
@@ -55,7 +58,7 @@ Read each source canvas, then create the adapted copy. The set, by target channe
 | announcement(s) | <V> Announcements: Start Here · Welcome to <V> | Welcome goes in a general channel if one exists, else the announcement channel |
 | maven-support / robot-advice | Meet Maven: How to Use This Channel | |
 | technical-issues | Technical Issues: How to Get Help | |
-| epms + reviewers | Weekly Availability | one canvas, shared into BOTH #<v>-epms and #<v>-reviewers. LOCKED FORMAT (from the Abacus EPM template, confirmed on Cadre 2026-07-28): an intro line `Weekdays 9-5 unless otherwise stated.` then a table with columns `EPM Name | Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday` and ~20 blank rows. It is a day-of-week grid — NOT a per-person prose block and NOT a timezone/general-schedule/OOO table. |
+| epms | Weekly Availability | **`#<v>-epms` ONLY.** Ryu, 2026-07-29: reviewers do not need it, EPMs do. Cadre's copy was shared into both channels; do not repeat that. LOCKED FORMAT (from the Abacus EPM template, confirmed on Cadre 2026-07-28): an intro line `Weekdays 9-5 unless otherwise stated.` then a table with columns `EPM Name | Sunday | Monday | Tuesday | Wednesday | Thursday | Friday | Saturday` and ~20 blank rows. It is a day-of-week grid — NOT a per-person prose block and NOT a timezone/general-schedule/OOO table. |
 | reviewers | Reviewer Roster | blank roster, one line per reviewer: name - role (pod) - timezone - availability; parallels EPM Roster |
 
 ## Adaptation rules (the core of this skill)
@@ -131,7 +134,7 @@ so absence from search ≠ absence.
 
 ## First real use
 
-**Cadre (Human Resources)**, 2026-07-28 — 13 canvases in workspace `Hr - sparta vertical`; IDs +
+**Cadre (Human Resources)**, 2026-07-28 — 15 canvases in workspace `Hr - sparta vertical`; IDs +
 channel-set differences recorded in the registry. Onboarding had no separate support channel (both
 canvases in `#cadre-onboarding`); Maven channel = `#cadre-maven-support`; no `#cadre-general` (Welcome
 went in `#cadre-announcement`).

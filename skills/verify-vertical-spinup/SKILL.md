@@ -44,7 +44,7 @@ Minimum: the vertical name. Resolve the rest and say so if any cannot be resolve
 
 Company is always Sparta `company_AAABlLQjCsYYoXP4rsZKpY0y`.
 
-## The audit: 11 areas, 42 checks
+## The audit: 11 areas, 41 checks
 
 Run every area. A skipped area is reported as SKIPPED with the reason, never as passing.
 
@@ -54,13 +54,13 @@ Run every area. A skipped area is reported as SKIPPED with the reason, never as 
 | B | Tags | the 9 role tags exist, vertical-prefixed, and **no id anchors another project's audiences** | `provision-vertical-teams-integrations` |
 | C | Audiences | canonical audience set present; **every audience has at least one target**; Slack targets resolve by channel id | `provision-vertical-teams-integrations` |
 | D | Slack channels | all 9 present; the 3 renamed ones no longer carry default topics; announcements is plural | `provision-vertical-slack-channels` |
-| E | Canvases | 13 canvases exist and are shared into channels; count remaining TBD links; instructions link is this vertical's | `create-vertical-canvases`, canvas link sweep |
+| E | Canvases | **15** canvases exist and are shared into channels (13 core + Reviewer Roster in `#<v>-reviewers` + Weekly Availability in `#<v>-epms`); count remaining TBD links; instructions link is this vertical's | `create-vertical-canvases`, then `replace-instructions-link` surface 4 |
 | F | Calendars | Onboarding + Writer calendars exist; shared to tag-synced groups; not world-readable; owner is not a contractor alias | `add-vertical-calendars` |
 | G | Studio worlds | campaign exists; per tasking world: **hooks present**, world-level verifier exists, default agent is `sparta_external_agent`, taiga env is this campaign's, `prometheus_gcs_path` contains this world's id, instructions link is not the old Vigil doc | `clone-studio-world`, `replace-instructions-link` |
 | H | Automations | the canonical 7; state per automation; **no foreign ids**; tag guard pairs match; bonus self-ID guard resolves to itself | `provision-vertical-automations` |
 | I | Bots | Studio Doctor deployed and responding; World File Upload bot deployed; cron switches | `add-vertical-bots` |
 | J | Drive + docs | folder tree cloned and renamed; **top folder shared to the `<v>-core-team` Google group as `writer`**; `Expert Facing` shared `reader` to the writer groups; both expert forms exist with response sheets linked; **the writer instructions doc exists, sits in `Expert Facing` not `[INT]`, and its BODY is this vertical's** (read it; a correct filename over a source-vertical body is the K7 failure mode again, and the doc is hand-recast so there is no skill guaranteeing it) | `new-vertical-drive-folder`, then a human for the instructions doc |
-| K | Numbers + candidate copy | the 8 checks below. Every one of them is a promise to a real person, so a FAIL here is not cosmetic | `create-vertical-listing`, `create-vertical-teams-project`, `provision-vertical-automations` |
+| K | Numbers + candidate copy | the 7 live checks below (K6 retired). Every one of them is a promise to a real person, so a FAIL here is not cosmetic | `create-vertical-listing`, `create-vertical-teams-project`, `provision-vertical-automations` |
 
 ### Area K in full
 
@@ -70,10 +70,10 @@ Cheap to run, all read-only, and every one has been found broken on a live verti
 |---|---|---|---|
 | K1 | Onboarding doc is not the platform placeholder | `get_project_onboarding_doc`. FAIL on the exact string "currently being prepared" | Cadre shipped this to 33 signed experts. The doc record EXISTS, so a checklist ticks it. This is the canonical BROKEN |
 | K2 | No role pays more than it bills | `get_project(include=['roles'])`, FAIL any role with `expected_payable_hourly > expected_billable_hourly` | Atria's expert bills 50 and pays 85; Abacus's EPM bills 55 and pays 90. Both live. The role loses money every hour it is worked |
-| K3 | Every listing states hours per week | `get_listing`, FAIL on `hoursPerWeek: null` | Null on both Cadre listings. A candidate cannot see the commitment they are agreeing to |
+| K3 | The weekly commitment reaches the candidate somehow | `get_listing` `hoursPerWeek`. **Null is the Sparta norm, NOT a defect**: null on Abacus's flagship Accounting Expert and on both Cadre listings (checked 2026-07-29). Report it, then check the commitment is stated somewhere a candidate actually sees before signing. FAIL only if it appears nowhere | A candidate should not have to guess the commitment, but flagging the field itself would fail every live vertical including the most mature one, and a check that cries wolf gets ignored |
 | K4 | Every listing with auto-reject ON has a rejection template | `get_listing`, FAIL when `automaticRejectionsOn` is true and `rejectionTemplateBody` is null | Cadre's flagship Expert listing auto-rejects at 7 days with no template. Rejected candidates get platform default copy |
 | K5 | The rejection template names THIS vertical's role | read the subject and body | Abacus's says "An Update To Your Accounting Expert Application". Copy that listing to a new vertical and you reject insurance candidates as accountants |
-| K6 | Instant offer text is set, or deliberately none | `get_listing` `offerExtendedText` | Null on both Cadre listings, and nothing in the spinup package sets it. Report null as FAIL until someone records the decision to leave it empty |
+| K6 | ~~Instant offer text~~ **RETIRED 2026-07-29, do not reinstate** | nothing to check | This check was wrong. `offerExtendedText` is null on EVERY Sparta listing checked, including Abacus's flagship Accounting Expert, because **the instant offer email is shared platform-wide and needs no per-vertical work** (Ryu, confirmed against live listings). Flagging null would have failed the most mature vertical. Note there is a separate PROJECT-level `offer_extended_text` on `edit_project`; no available tool reads it back, so nothing can be verified about it and nothing should be asserted |
 | K7 | The EPM Training doc is this vertical's | **READ the body** of the doc in `[INT] Project <Vertical>`. FAIL on any mention of another vertical, the wrong domain, or Abacus doc ids `1u-Go8Cr` / `1x6WJoAT`. Checking the Drive filename is NOT this check | The Drive filename is renamed by the clone and the body is not, so the filename PASSES while the doc sends EPMs to another vertical. Cadre's read `Cadre EPM Training` in Drive with an Abacus body underneath. **Root cause was the `_CLONEME` template's own copy being Abacus's document verbatim; TOKENIZED 2026-07-29**, so verticals cloned after that date inherit tokens. Abacus, Atria and Rampart were all cloned BEFORE it, so check them |
 | K8 | The weekly commitment is the same number everywhere | compare the onboarding doc, the EPM Training doc, the canvases, and the listing `hoursPerWeek` | Abacus says 15 to 20 in the onboarding doc, 15 to 30 in the EPM Training doc, and 15 in the canvases. Its office hours disagree too, 9am/3pm PT in the doc against a 9am/4pm PT live calendar. Three sources, three promises |
 

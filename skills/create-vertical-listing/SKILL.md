@@ -63,7 +63,7 @@ list or a domain from another vertical.
 | 14 | **Listing owner** | `owner_ids`, if it should not default to whoever runs this |
 | 15 | **Referral amount** | a dollar figure. Live Sparta listings run 240 to 600 with no visible rule, so there is nothing to default to. Not writable by API, see step 7 |
 | 16 | **Rejection template** | subject + body. Auto-reject is ON by default at 7 days, so a listing with no template rejects candidates using the platform default. Not writable by API, see step 7 |
-| 17 | **Instant offer text** | the copy a candidate sees when the offer is extended, or a deliberate none. Not writable by API, see step 7 |
+| ~~17~~ | ~~**Instant offer text**~~ | **DO NOT ASK. Settled 2026-07-29:** the instant offer email is shared platform-wide and needs no per-vertical work. `offerExtendedText` is null on every Sparta listing including Abacus's flagship Accounting Expert, so null is correct, not a gap. (A separate PROJECT-level `offer_extended_text` exists on `edit_project`, but no tool reads it back, so assert nothing about it.) |
 
 ### Source listings to offer (live, ids read 2026-07-29 PT)
 
@@ -191,21 +191,22 @@ Omitting `evaluationCriteriaId` creates a criterion; `status="archived"` soft-de
 a partial list is how criteria get lost. Mark a criterion `hardFilter` only when the operator
 means it to auto-reject.
 
-**8. The three candidate-facing fields no write tool can set.** `referralAmount`, the rejection
-template (subject + body) and `offerExtendedText` all appear on the `get_listing` record and NONE
-of them is a parameter on `create_listing` or `edit_listing` (both schemas re-checked 2026-07-29).
+**8. The two candidate-facing fields no write tool can set.** `referralAmount` and the rejection
+template (subject + body) both appear on the `get_listing` record and NEITHER is a parameter on
+`create_listing` or `edit_listing` (both schemas re-checked 2026-07-29). `offerExtendedText` is on
+the record too but is deliberately NOT in scope: that email is shared platform-wide and is null on
+every Sparta listing, Abacus's flagship included.
 So this skill cannot write them, and must not silently skip them either. Collect all three in the
 intake, then hand them back as a named manual UI step on the listing page, quoting the exact values
 the operator confirmed. Say in the handback that until someone does it:
 
 - referral pays nothing, so nobody refers,
 - the listing auto-rejects candidates at 7 days using the platform default copy, because
-  `automaticRejectionsOn` defaults true and `timeToAutoReject` to 604800,
-- the offer arrives with no project context.
+  `automaticRejectionsOn` defaults true and `timeToAutoReject` to 604800.
 
 **Live proof this is not theoretical:** Cadre's flagship `Human Resources Expert`
 `list_AAABn6aBpdG_oTdx-CFL6a7r` has `rejectionTemplateSubject`/`Body` null with auto-reject ON,
-`offerExtendedText` null, and `hoursPerWeek` null, while its sibling `list_AAABn6uMUYyPrNM3gPhHkK9u`
+`hoursPerWeek` null (which is the norm, not a defect), while its sibling `list_AAABn6uMUYyPrNM3gPhHkK9u`
 does carry a correctly-titled rejection template. Same vertical, same week, one has it and one does
 not, which is exactly what an unasked field looks like.
 
