@@ -16,3 +16,7 @@ backup_*.json
 __pycache__/
 *.py[cod]
 .venv/
+
+# Stop-hook sync side-effects
+.sync-skills.log
+.sync-skills.lock/
