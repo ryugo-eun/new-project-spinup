@@ -61,8 +61,8 @@ list or a domain from another vertical.
 | 12 | **Public, or a private sourcing funnel** | the private twin needs UI work, see Unverified |
 | 13 | **What changes in the copy** | which domain wording, sub-domains, credentials and ideal-background bullets differ from the source |
 | 14 | **Listing owner** | `owner_ids`, if it should not default to whoever runs this |
-| 15 | **Referral amount** | a dollar figure. Live Sparta listings run 240 to 600 with no visible rule, so there is nothing to default to. Not writable by API, see step 7 |
-| 16 | **Rejection template** | subject + body. Auto-reject is ON by default at 7 days, so a listing with no template rejects candidates using the platform default. Not writable by API, see step 7 |
+| 15 | **Referral amount** | a dollar figure. Live Sparta listings run 240 to 600 with no visible rule, so there is nothing to default to. Not writable by API, see step 8 |
+| 16 | **Rejection template** | subject + body. Auto-reject is ON by default at 7 days, so a listing with no template rejects candidates using the platform default. Not writable by API, see step 8 |
 | ~~17~~ | ~~**Instant offer text**~~ | **DO NOT ASK. Settled 2026-07-29:** the instant offer email is shared platform-wide and needs no per-vertical work. `offerExtendedText` is null on every Sparta listing including Abacus's flagship Accounting Expert, so null is correct, not a gap. (A separate PROJECT-level `offer_extended_text` exists on `edit_project`, but no tool reads it back, so assert nothing about it.) |
 
 ### Source listings to offer (live, ids read 2026-07-29 PT)
@@ -231,10 +231,11 @@ is linked to.
   `Government & Public Policy Expert — Sourcing Funnel (Private)` `list_AAABn6uRcb4s2pOom5RHPpLV`
   with `isPrivate: true`, `disableApplications: true` and 9,667 candidates alongside the public
   listing. So a private funnel is UI work; do not promise it through the API.
-- **`referralAmount`**, the **rejection template** and **`offerExtendedText`** are not parameters on
-  either write tool. That much is verified (both schemas, 2026-07-29) and is handled by step 8. What
-  remains unverified is HOW they get set: presumably the listing UI, but nobody has watched it
-  happen. Same for **`taxonomy` domain/subdomain**.
+- **`referralAmount`** and the **rejection template** are not parameters on either write tool. That
+  much is verified (both schemas, 2026-07-29) and is handled by step 8. What remains unverified is
+  HOW they get set: presumably the listing UI, but nobody has watched it happen. Same for
+  **`taxonomy` domain/subdomain**. `offerExtendedText` is also unwritable but needs no per-vertical
+  work at all, so it is out of scope rather than pending.
 - **Why the referral figures differ is unknown.** Cadre alone runs 360 on its Expert listing and 240
   on its Specialist listing. Two roles, one vertical, one week apart, different amounts. Ask, never
   pattern-match.
