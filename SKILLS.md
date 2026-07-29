@@ -36,7 +36,11 @@ calendars, 10 = automations, 11 = bots, 12 = instructions doc, 13 = canvases, 14
 **Steps 13 and 14 swapped on 2026-07-29.** The Doc used to run the link swap at 13 and canvases at
 14. That could not work: `replace-instructions-link` surface 4 rewrites the canvases, so it has to
 run after they exist. Canvases are now 13 and the single link pass is 14, the last build step before
-the audit. **The Google Doc still shows the old order and needs this one edit by hand.**
+the audit. **The Google Doc was updated 2026-07-29:** its numbered checklist, both detail headings
+and every cross-reference now carry the new order. The only thing left is cosmetic, the two detail
+SECTIONS are still printed 14-then-13, which the Doc flags in its own ordering note. Fixing that
+means dragging two sections in the UI; it was not done by API because rebuilding a hand-edited
+region's bullets and bold is more risk than the benefit.
 
 **How the Doc is produced:** write `SPINUP-RUNBOOK.md`, upload it with `upload_get_url` plus a
 `curl` PUT, `upload_send_to_drive`, then `drive.files.copy` with
