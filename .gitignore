@@ -1,0 +1,18 @@
+# Secrets. Never commit a real key; see each skill's *.env.example for the shape.
+spinup.env
+*.env
+!*.env.example
+.env*
+!.env.example
+
+# Script side-effects
+backup_*.json
+
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
