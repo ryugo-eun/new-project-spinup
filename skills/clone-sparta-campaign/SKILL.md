@@ -101,8 +101,15 @@ Only the target campaign has no default.
 **Always ask question 3. Never supply a default, never reuse another vertical's env.** Every project
 needs its OWN Taiga environment. The engine aborts when it is unset rather than guess, because a
 fresh clone inherits `[CLONE ME]`'s env, so leaving it alone silently points the new vertical's runs
-at another vertical's environment. The env is re-stamped in all four worlds AND inside the
-QA_Results and Trigger Promo QC Report remixes.
+at another vertical's environment. The env is re-stamped in all four worlds AND inside **every remix that
+carries an env id of its own**.
+
+**Match the KEY, never a list of remix names.** Re-stamp any key matching `*_environment_id` inside
+`remix_world_field_values`, on every remix, in every world. Remixes observed carrying one (Abacus's
+`[Live] Golden Final Tasking World`, 2026-07-30): `QA_Results`, `Trigger Promo QC Report`,
+`Taiga Job Sync`, `Taiga QA Create Finding`, and `Fetch Preference Labels` — that last one under
+`prometheus_environment_id`, not `taiga_environment_id`. Treat that list as a sample, not the set: it grew
+from two to five the first time anyone looked past the two that were known.
 
 **If the vertical has no Taiga env yet, it has to be created first.** Give the operator these:
 
@@ -167,8 +174,12 @@ Guards, all verified to fire on 2026-07-29:
    (verified). This matters because `clone-studio-world`, `replace-instructions-link` and
    this engine's own re-runs all resolve worlds by exact canonical name.
 3. **Re-stamp the Taiga env to the operator's answer** in `world_custom_fields` AND inside
-   `task_remix_configs` (QA_Results and Trigger Promo QC Report each carry their own copy: stamping
-   only the custom field leaves them on the old environment), and **strip `prometheus_*` runtime keys**
+   `task_remix_configs` — every key matching `*_environment_id` in every remix's
+   `remix_world_field_values`, not a named list (see the env section above; at least five remixes carry
+   one, and stamping only the custom field leaves them all on the old environment). `task_remix_configs`
+   is an ARRAY, so PATCH replaces it wholesale: read it, change only the matched keys, write the full array
+   back, and verify the remix COUNT is unchanged afterwards rather than trusting the response.
+   Also **strip `prometheus_*` runtime keys**
    when `prometheus_gcs_path` names another world. A stale path makes the runner mount the source
    world's files (`platform_has_environment=False`, empty or wrong trajectories) while everything
    else still looks correct.
@@ -239,8 +250,21 @@ the link cannot be confirmed through mercor-mcp. Check it by eye in the Teams UI
 - **`GET /worlds/` returns `{"worlds":[...]}`**, not a bare list, and it is a SUBSET of each world.
 - **The UI clone suffixes world names** two different ways: `<name>- copy` and `<name> - Copy`.
   Match through the suffix, case-insensitively, then rename.
-- **The Taiga env lives in more than one place.** Re-stamping only `world_custom_fields` leaves the
-  QA_Results and Trigger Promo QC Report remixes pointing at the old environment.
+- **The Taiga env lives in more than one place, and the list of places keeps growing.** Re-stamping only
+  `world_custom_fields` leaves every env-carrying REMIX on the old environment. Match `*_environment_id`
+  by key across all remixes; do not trust a list of remix names.
+- **AUDIT the verticals that already exist, not only the clone you are making.** This rule postdates
+  Atria, and nobody went back, so Atria ran for weeks with `world_custom_fields.taiga_environment_id`
+  correct on all 8 worlds and BOTH remixes wrong on all 6 that have them — 12 values, including the
+  `[Live New Flow] Final Tasking World` every new writer world spawns from. Fixed 2026-07-30. Cadre is
+  still entirely on Abacus's env at world level; it has no spawned worlds yet, which makes now the
+  cheapest moment to fix it.
+- **A wrong remix env does not fail loudly, it produces confident wrong answers.** On Atria it read as a
+  PIPELINE fault, not a config one: Taiga reads for Atria tasks resolved into Abacus's environment, found
+  nothing, and reported zero rollouts — which the advance sweep answers with a RE-DISPATCH. Live
+  2026-07-30: `task_33deae46` had 10 finished trajectories that were Fable-blocked (restricted topic, must
+  never be re-run) and `atria-advance` proposed re-running it, because the guard that detects blocked runs
+  reads the FAILED rollouts and there were none visible. Wrong env → empty read → destructive advice.
 - **Never carry the clone's inherited env forward, and never default it.** What a fresh clone
   carries is `[CLONE ME]`'s env. Every project needs its own; the engine aborts with the Loom link
   rather than guess.
