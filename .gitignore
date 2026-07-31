@@ -1,3 +1,11 @@
+# This repo publishes the spinup SKILLS and nothing else. Everything at the root is
+# ignored by default; only skills/ (and this file) is tracked. Local working docs
+# (CLAUDE.md, SPINUP-RUNBOOK.md, GOTCHAS.md, SKILLS.md, HANDOFF-*.md), scripts/ and
+# test-fixtures/ stay on disk but are deliberately NOT published.
+/*
+!/.gitignore
+!/skills/
+
 # Secrets. Never commit a real key; see each skill's *.env.example for the shape.
 spinup.env
 *.env
