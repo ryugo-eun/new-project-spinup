@@ -7,18 +7,24 @@ the writer instructions doc (8a), which is domain writing, not automation.
 
 Last audited 2026-07-29.
 
-**16 spinup skills, 12 ops skills.** Install location is
+**17 spinup skills, 12 ops skills.** Install location is
 `~/.claude/skills/<name>/SKILL.md`; a skill only becomes slash-invocable once it is
 there, and authoring it anywhere else does nothing. `~/.claude` is **not** a git
 repo, so every spinup skill is mirrored into `new-project-spinup/skills/`.
 Installed is authoritative; the mirror is the backup.
 
-**CORRECTION 2026-07-29: the mirror does NOT reach GitHub.** This file previously
-claimed it did. `~/Desktop/MERCOR/new-project-spinup` is not a git repo and neither
-is any parent directory (`git rev-parse --show-toplevel` fails). So the mirror is a
-second copy on the same disk, not an offsite backup, and a disk loss takes both
-copies of all 16 spinup skills. Fix by `git init` + a remote, or by moving the
-skills into an existing pushed repo.
+**The mirror DOES reach GitHub now.** This repo has an `origin`
+(`ryugo-eun/new-project-spinup`, branch `main` tracking `origin/main`), and
+`scripts/sync-skills.sh` runs as a Stop hook that commits and pushes the mirror at
+the end of every turn. So the mirror is a real offsite backup, and a disk loss no
+longer takes every copy. The 2026-07-29 correction that used to sit here said the
+opposite; it was true before the repo was initialised and is now obsolete.
+
+**A brand-new skill still has to be copied into `skills/` by hand once.** The sync
+script derives what to mirror from the directories already present, which is
+deliberate: it is what keeps the unrelated Panacea ops skills in `~/.claude/skills`
+out of this repo. Create the skill, `cp -R` it in once, and the hook maintains it
+from then on.
 
 ---
 
@@ -65,6 +71,7 @@ data room and a realistic HR task actually look like), not something to automate
 | 0b | Slack workspace | manual / IT | the workspace itself is requested, not scripted |
 | 1 | Studio campaign | `clone-sparta-campaign` (adopt mode, after the human clones `[CLONE ME]` in the UI) | Teams project, for the Studio-to-Teams link |
 | 1b | extra worlds, or hook gaps | `clone-studio-world` (hooks included) | the campaign. Skip if step 1 already wired qc_specs + the 22 hooks |
+| 1c | the pipeline dashboards | `port-vertical-dashboards` | the campaign, plus its `[LIVE] Golden World Building` world for the one world-scoped view. A cloned campaign has ZERO dashboards, so its reviewers open Studio to an empty sidebar |
 | 2 | the 9 Slack channels | `provision-vertical-slack-channels` | the workspace. **Before** audiences, canvases and bots, all of which key off channel ids |
 | 3 | Drive tree + the 2 forms (steps 1-7) | `new-vertical-drive-folder` | vertical + domain name only, so it can run early |
 | 5 | tags, audiences, targets | `provision-vertical-teams-integrations` | project, channels, campaign, Insightful projects. **Creates the `<v>-core-team` Google group** |
@@ -102,6 +109,7 @@ Ordered by the New Vertical Startup Playbook step they serve.
 | 0a | `create-vertical-listing` | **BUILT 2026-07-29.** One listing per expert role, run before `create_role`. Pins `commitment=hourly` (the API defaults to full-time), reconciles the pay band against the role's payable rate, forces `validate_listing_description` to pass, and leads with the trap that `create_listing` publishes instantly with no draft state. Documents the private sourcing-funnel twin and what about it is unverified. | mirrored here |
 | 1 | `clone-sparta-campaign` | **Adopt mode since 2026-07-29.** The human clones `[CLONE ME]` in the Studio UI, then this wires every gap: renames the `- copy` worlds to canonical, re-stamps the Taiga env (keeping the campaign's own env unless told otherwise), strips stale file pointers, repoints `base_world_id` and the consensus target (which `[CLONE ME]` aims at **Vigil**), verifier, `sparta_external_agent`, SER-Heal, tasking AutoQC (qc_specs + 22 hooks), builder 4-hook set, campaign-level configs. Inventories first, never creates worlds, so it cannot duplicate. Old create-and-clone path behind `--mode create`. | mirrored here |
 | 1 | `clone-studio-world` | **Absorbed `provision-autoqc-hooks` and `insert-autoqc-hooks` 2026-07-29 (both deleted).** Clone one world (or a campaign subset) and make it actually RUNNABLE, in one skill: the canonical hook chain + qc_specs, re-stamp Taiga env, create the world-level Sparta verifier, repoint the default agent to `sparta_external_agent`, repoint `base_world_id`, scrub cross-campaign refs, re-sync the file bundle. Also the skill for a hook gap on a world that was spawned rather than cloned. Carries the HARD RULE: **22 hooks, never attach the 3 Prometheus ones** (they made Abacus double-run, and `canonical_hooks.json` still contains them), and the #1 gotcha: remap the hook PREDICATE, not just the payload. Hook mechanics in `references/autoqc-hooks.md`. | mirrored here, scripts included (not `spinup.env`) |
+| 1 | `port-vertical-dashboards` | Copy a source vertical's Studio dashboards (the per-pipeline-stage saved-SQL **custom query views**) onto a new one. A cloned campaign inherits none, so a fresh vertical's reviewers see an empty sidebar. Carries the two facts that make this destructive if missed: the write is a **PUT that replaces the campaign's ENTIRE set** (no create-one route), and **GET is filtered by the caller's role**, so reading the source as a non-admin copies a truncated set. Repoints the in-SQL campaign id, rewrites descriptions naming the source, and gates the one world-scoped view (Pipeline Fixes) on the target's golden world actually carrying the status it filters on, skipping it rather than shipping a permanently empty table. Also flags views still on the loose `golden_world_MAV` world-name filter. | mirrored here, script included |
 | 2 | `new-vertical-drive-folder` | Clone the `_CLONEME (New Vertical Template)` Drive tree and rename it for the vertical. Also produces the two expert-facing forms. | mirrored here |
 | 2 | `replace-instructions-link` | Swap the writer-instructions Google Doc baked into world layouts. Cloned worlds inherit the OLD Vigil doc, so without this a new vertical silently points writers at Vigil. | mirrored here |
 | 3 | `provision-vertical-slack-channels` | The canonical nine channels: rename the 3 the workspace ships (`general`/`random`/`help-desk`), create the 6 by hand, then verify live and audit Teams audience targets for names left stale by renames. No channel API exists, so it is a runbook plus checks. | mirrored here |
