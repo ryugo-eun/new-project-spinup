@@ -44,7 +44,7 @@ Minimum: the vertical name. Resolve the rest and say so if any cannot be resolve
 
 Company is always Sparta `company_AAABlLQjCsYYoXP4rsZKpY0y`.
 
-## The audit: 11 areas, 41 checks
+## The audit: 11 areas, 42 checks
 
 Run every area. A skipped area is reported as SKIPPED with the reason, never as passing.
 
@@ -56,11 +56,35 @@ Run every area. A skipped area is reported as SKIPPED with the reason, never as 
 | D | Slack channels | all 9 present; the 3 renamed ones no longer carry default topics; announcements is plural | `provision-vertical-slack-channels` |
 | E | Canvases | **15** canvases exist and are shared into channels (13 core + Reviewer Roster in `#<v>-reviewers` + Weekly Availability in `#<v>-epms`); count remaining TBD links; instructions link is this vertical's | `create-vertical-canvases`, then `replace-instructions-link` surface 4 |
 | F | Calendars | Onboarding + Writer calendars exist; shared to tag-synced groups; not world-readable; owner is not a contractor alias | `add-vertical-calendars` |
-| G | Studio worlds | campaign exists; per tasking world: **hooks present**, world-level verifier exists, default agent is `sparta_external_agent`, taiga env is this campaign's, `prometheus_gcs_path` contains this world's id, instructions link is not the old Vigil doc | `clone-studio-world`, `replace-instructions-link` |
+| G | Studio campaign + worlds | campaign exists; per tasking world: **hooks present**, world-level verifier exists, default agent is `sparta_external_agent`, taiga env is this campaign's, `prometheus_gcs_path` contains this world's id, instructions link is not the old Vigil doc; **campaign-level: the pipeline dashboards exist** (see G-dash below) | `clone-studio-world`, `replace-instructions-link`, `port-vertical-dashboards` |
 | H | Automations | the canonical 7; state per automation; **no foreign ids**; tag guard pairs match; bonus self-ID guard resolves to itself | `provision-vertical-automations` |
 | I | Bots | Studio Doctor deployed and responding; World File Upload bot deployed; cron switches | `add-vertical-bots` |
 | J | Drive + docs | folder tree cloned and renamed; **top folder shared to the `<v>-core-team` Google group as `writer`**; `Expert Facing` shared `reader` to the writer groups; both expert forms exist with response sheets linked; **the writer instructions doc exists, sits in `Expert Facing` not `[INT]`, and its BODY is this vertical's** (read it; a correct filename over a source-vertical body is the K7 failure mode again, and the doc is hand-recast so there is no skill guaranteeing it) | `new-vertical-drive-folder`, then a human for the instructions doc |
 | K | Numbers + candidate copy | the 7 live checks below (K6 retired). Every one of them is a promise to a real person, so a FAIL here is not cosmetic | `create-vertical-listing`, `create-vertical-teams-project`, `provision-vertical-automations` |
+
+### Area G-dash: the pipeline dashboards
+
+`GET /campaigns/{camp_id}/custom-query-views`. **Run it as a `campaign_admin`** — the endpoint
+filters by the caller's role, so a non-admin read under-reports and makes a healthy vertical
+look empty.
+
+FAIL when the count is far below the source vertical's set. A cloned campaign inherits **zero**
+custom query views, so this is the default state of every new vertical, and nothing else in the
+audit notices: the worlds, hooks, verifier and agent can all be perfect while every reviewer
+opens Studio to an empty sidebar and concludes there is no work.
+
+Two softer findings worth reporting rather than failing on:
+
+- **Every view has a null `conditional_render_filter`.** Null means ADMIN-ONLY, not "everyone",
+  so a vertical in this state shows its reviewers nothing. Indistinguishable from having no
+  views at all, from a reviewer's seat.
+- **A view still carries the loose world-name filter** (`NOT IN ('golden_world_MAV', …)` rather
+  than the four `NOT ILIKE` clauses). New test worlds leak into reviewers' queues.
+
+Also check any **world-scoped** view (one filtering a single `world_id`) points at THIS
+vertical's world and that the world carries the status the SQL filters on. A view aimed at a
+world without that status renders an empty table forever, which reads as "no work in this
+stage". Fixed by `port-vertical-dashboards`.
 
 ### Area K in full
 

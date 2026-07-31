@@ -5,7 +5,7 @@ still have no skill. The goal is a skill for every step that **should** have one
 the gap list at the bottom is the real backlog. One step is deliberately excluded:
 the writer instructions doc (8a), which is domain writing, not automation.
 
-Last audited 2026-07-29.
+Last audited 2026-07-31.
 
 **17 spinup skills, 12 ops skills.** Install location is
 `~/.claude/skills/<name>/SKILL.md`; a skill only becomes slash-invocable once it is
@@ -162,7 +162,7 @@ This is the backlog. Playbook order.
 | ~~4~~ | ~~**Canvas link sweep**~~ | **BUILT 2026-07-29** as `sweep-canvas-links`. Never run end to end yet. |
 | 6 | **SVA per-vertical tracking app** | Adding a vertical tab, crons, and dashboards to SVA. |
 | 7 | **EPM + reviewer org structure** | Roles, per-role instruction docs, EPM training doc, EPM skills bundle. |
-| ~~all~~ | ~~**`verify-vertical-spinup`**~~ | **BUILT 2026-07-29.** Never run end to end yet; the first real run is itself a test of the check specs. |
+| ~~all~~ | ~~**`verify-vertical-spinup`**~~ | **BUILT 2026-07-29.** Never run end to end yet; the first real run is itself a test of the check specs. Gained the dashboards check (area G-dash) 2026-07-31, now 42 checks. |
 
 ---
 
