@@ -32,7 +32,7 @@ Ask for, and confirm, all of these before touching code:
 | Vertical name + short key | `Rampart` / `rampart` | naming, registry keys, env suffixes |
 | Human label | `Rampart (Insurance)` | `CAMPAIGN_LABELS`, roster |
 | Studio campaign id | `camp_596be65…` | both bots' campaign registry |
-| Golden WB world id | `world_83dcee87…` | upload bot `PROTECTED_WORLD_IDS` |
+| Golden WB world id | `world_83dcee87…` | upload bot `PROTECTED_WORLD_IDS` (do not trust notes, read it live — Step 3) |
 | Tasking world id | `world_84be26de…` | lineage verification (below) |
 | Slack workspace | Insurance grid workspace | where the two apps get created |
 | Doctor channel id | `C0BK9K03WAG` (if it exists yet) | `/doc channel set` later |
@@ -91,11 +91,39 @@ All crons ship OFF (Redis switch, off by default). Nothing fires until each is e
 
 In `~/Desktop/MERCOR/panacea-world-upload-bot` (template = the last `feat(<vertical>): add the … tenant` commit):
 
-1. `scripts/constants.ts` — add `<key>: "<camp_id>"` to `CAMPAIGN_IDS`, and add the golden WB world id to `PROTECTED_WORLD_IDS` (with a comment) so a mis-pasted WB task link can't full-replace the shared golden world. **Confirm the WB world id against Studio first** (`GET /worlds/<id>` → `world_name` starts "[LIVE] Golden World Building", `campaign_id` is the target, `archived_at` null). Protecting the wrong id is a silent failure: the real scaffold stays exposed.
-2. `scripts/slack-worker.ts` — add the `CAMPAIGNS.<key>` row. **If the upload channel exists:** `adminIds: "", adminChannel: "<channel_id>"` (notices post to the channel, no DMs - the Atria/Rampart pattern). **If not yet:** `adminIds: process.env.<KEY>_ADMIN_SLACK_ID ?? ""` (DM an admin until the channel exists).
-3. `api/slack/events.ts` — add the `<key>` tenant row (`<KEY>_SLACK_SIGNING_SECRET` / `_BOT_TOKEN` / `_INTAKE_CHANNEL_ID`). **Do NOT re-import shared constants here** - the Edge bundler breaks on it; keep values inline.
-4. `.github/workflows/upload.yml` — pass `<KEY>_SLACK_BOT_TOKEN` (and `<KEY>_ADMIN_SLACK_ID` only if using DMs, not a channel).
-5. `CLAUDE.md` — add the config-table row + a status entry (channel routing + remaining setup steps).
+1. `scripts/constants.ts` — add `<key>: "<camp_id>"` to `CAMPAIGN_IDS`, then add **every** shared world of the new campaign to `PROTECTED_WORLD_IDS` (one commented line each, grouped under a `// <Vertical> (camp_…)` header). A mis-pasted WB task link resolves to the shared scaffold, and the upload is a FULL REPLACE, so an unprotected scaffold is one paste away from being clobbered for every writer in the vertical.
+
+   **Enumerate them live, never from notes or another vertical's list.** Do not hand-pick one id; list the campaign's worlds and take every hit:
+
+   ```bash
+   set -a; . ~/Desktop/MERCOR/.env.local; set +a   # RLS_API_KEY, never echoed
+   CAMP=<camp_id>
+   curl -s "https://api.studio.mercor.com/worlds/?campaign_id=$CAMP" \
+     -H "Authorization: Bearer $RLS_API_KEY" -H "X-Campaign-Id: $CAMP" \
+     -H "X-Company-Id: comp_2fa4115109d741cd94a3c409ed89e61f" \
+     -H "X-Account-Id: acct_be8f7fcc2c554b33baa5a0c9d05496e3" \
+   | jq -r '(if type=="array" then . else (.worlds // []) end)
+            | "total=\(length)", (.[]
+            | select((.world_name|ascii_downcase)
+              | test("golden|world building|world creation and planning|scaffold|template"))
+            | [.world_id, .world_name] | @tsv)'
+   ```
+
+   Both headers are required (`X-Campaign-Id` missing → `{"detail":"X-Campaign-Id header required"}`, which `jq` renders as a silent `total=0`, so check the total is non-zero before believing an empty hit list). Expect at least a `[LIVE] Golden World Building`; verticals also carry a golden tasking world, a planning world, or a consensus golden. Add all of them.
+
+2. **Then prove the guard actually fires for the new vertical** — this is the step whose absence caused the 2026-07-30 Abacus clobber. Run the guard over every live world in the campaign and read the output:
+
+   ```bash
+   cd ~/Desktop/MERCOR/panacea-world-upload-bot && npm test    # includes tests/worker/protected-world.test.ts
+   ```
+
+   then a live sweep using `checkProtectedWorld` + `extractSpecWorldIds` from `scripts/protected-world.ts` against the campaign's real world list and real `GET /campaigns/<camp_id>` config (see RUNBOOK §9 "Golden-world backstop"). Every shared world must come back BLOCKED and no per-writer world may. `spec=(none)` in that output is acceptable (Rampart's real state) but means signal 3 is unavailable for the vertical, so the id list and the name pattern are carrying it alone: double-check the ids.
+
+   The guard has three OR'd signals (id list, `PROTECTED_WORLD_NAME_RE` on the world name, and the campaign's `spec_world_id`), so a vertical is not defenceless if you miss an id. Do not treat that as licence to skip the ids: a golden world named off-pattern with no spec pointer is covered by nothing but the list.
+3. `scripts/slack-worker.ts` — add the `CAMPAIGNS.<key>` row. **If the upload channel exists:** `adminIds: "", adminChannel: "<channel_id>"` (notices post to the channel, no DMs - the Atria/Rampart pattern). **If not yet:** `adminIds: process.env.<KEY>_ADMIN_SLACK_ID ?? ""` (DM an admin until the channel exists).
+4. `api/slack/events.ts` — add the `<key>` tenant row (`<KEY>_SLACK_SIGNING_SECRET` / `_BOT_TOKEN` / `_INTAKE_CHANNEL_ID`). **Do NOT re-import shared constants here** - the Edge bundler breaks on it; keep values inline.
+5. `.github/workflows/upload.yml` — pass `<KEY>_SLACK_BOT_TOKEN` (and `<KEY>_ADMIN_SLACK_ID` only if using DMs, not a channel).
+6. `CLAUDE.md` — add the config-table row + a status entry (channel routing + remaining setup steps).
 
 Verify: `npx tsc --noEmit` and `npm test` (expect the full suite green). Commit **only these files**, `git push origin main`.
 
@@ -145,6 +173,7 @@ Hand the human this checklist and WAIT for confirmation of each before proceedin
 - [ ] Doctor: production deploy Ready and POSTDATES the env timestamps; `/doc` responds
 - [ ] Doctor: ops channel set (`/doc channel`), `SLACK_BOT_TOKEN_<KEY>` set, crons dry-run clean
 - [ ] Upload: a real `world_<id>.zip` uploads → replaces → syncs → channel notice; `RLS_API_KEY` scoped to the campaign
+- [ ] Upload: the golden-world guard proven for THIS vertical — every shared/golden world of the campaign comes back BLOCKED in the live sweep (Step 3.2), with its ids also in `PROTECTED_WORLD_IDS`. An unproven guard is how Abacus's live scaffold got full-replaced on 2026-07-30.
 - [ ] Both repos: only the vertical's files were committed (in-flight WIP left alone), pushed as `ryugo-eun@mercor.com`
 
 ## Gotchas (all seen for real)
