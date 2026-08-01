@@ -196,10 +196,10 @@ def upload_files(w, replace):
 def sync_files(w, sync_cfg, wait):
     """Fire Sync to External Storage and wait for the stamp to advance.
 
-    NOTE, measured on Delphi 2026-07-31: the Sparta runner materialised /tmp/world with real bytes
-    even with NO prometheus_* keys on the world, so this is not always a hard prerequisite. It is
-    still run because a stale pointer into a previous env's bucket is a known way to get an empty
-    mount, and a fresh sync costs a minute.
+    REQUIRED, never optional. The runner mounts what this step copied into the environment's
+    storage; without it the container gets an empty or another environment's volume. This aborts
+    rather than proceeding on an unconfirmed sync, because a run on an empty volume still returns
+    200 and still completes, so continuing would produce a green result that means nothing.
     """
     print("\n[sync]")
     wid = w["world_id"]
@@ -216,9 +216,11 @@ def sync_files(w, sync_cfg, wait):
             print(f"  synced at {c.get('prometheus_clean_sync_run_at')}, "
                   f"status={c.get('prometheus_sync_status')}")
             return True
-    print("  !! sync stamp did not advance in time. Not fatal (see the note in this file), but "
-          "check the world before trusting an empty-looking run.")
-    return False
+    sys.exit(f"ABORT: the sync stamp did not advance within {wait}s, so the files are NOT confirmed\n"
+             f"       in the environment's storage. Running now would produce a completed\n"
+             f"       trajectory against an empty volume, which is a meaningless pass.\n"
+             f"       Check the world in Studio, then re-run with --sync (raise --sync-wait if it\n"
+             f"       is merely slow).")
 
 
 def create_task(w, reuse):
@@ -345,7 +347,11 @@ def main():
 
     if phases["files"]:
         upload_files(w, a.replace_files)
-    if phases["sync"] and sync_cfg:
+    if phases["sync"]:
+        if not sync_cfg:
+            sys.exit("ABORT: the campaign has no prometheus_sync world remix, so the files cannot\n"
+                     "       be synced into the environment and no run would be meaningful.\n"
+                     "       clone-sparta-campaign provisions it.")
         sync_files(w, sync_cfg, a.sync_wait)
 
     task_id = a.task_id

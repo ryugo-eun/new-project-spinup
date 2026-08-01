@@ -81,18 +81,26 @@ Two things are deliberately reported rather than failed on:
   returns a count that does not match. A hit proves presence; a miss proves nothing.
 - **The sync stamp.** See below.
 
-## Measured on Delphi, 2026-07-31
+## Sync to External Storage is required, always
 
-The runner materialised `/tmp/world` with **real bytes** (all 52 files, correct sizes) while the
-world carried **no `prometheus_*` keys at all**, because they had been stripped an hour earlier
-during an env re-stamp. So `prometheus_gcs_path` is **not** a hard prerequisite for the Sparta
-external runner: it mounts from the world snapshot.
+The runner mounts what that step copied into the environment's storage. Skip it, or run it against
+a pointer left behind by a previous environment, and the container comes up with an empty or wrong
+volume. So this skill **aborts** if the sync stamp does not advance, rather than continuing: a run
+on an empty volume still returns 200 and still completes, so proceeding would hand you a green
+result that means nothing.
 
-The sync phase still runs, because a *stale* pointer into a previous environment's bucket is a
-known way to get an empty mount, and a fresh sync costs a minute. But a missing sync stamp is a
-warning here, not a failure, and the old advice that a run cannot work without one is wrong.
+Whenever the environment changes, the sync has to be re-run before the next test, because the copy
+lands per environment.
 
-Result on Delphi that day: 9 completed trajectories, files mounted, on Abacus's Taiga env.
+A note on how this section got written, since it is a trap worth marking: on 2026-07-31 the world
+carried no `prometheus_*` keys at run time (they had been stripped an hour earlier during an env
+re-stamp) and the run still mounted all 52 files, which was briefly read as proof the sync is
+optional. It is not proof. The world's own `updated_at` and the container's file timestamps both
+sit in the two minutes before the run, which is what a sync firing right beforehand looks like.
+**Absence of those keys is not evidence that no sync ran.** Do not infer the sync was skipped from
+a missing pointer.
+
+Result on Delphi 2026-07-31: 9 completed trajectories, all 52 files mounted, on Abacus's Taiga env.
 
 ## Endpoints, all verified live 2026-07-31
 
