@@ -118,7 +118,13 @@ so absence from search ≠ absence.
   which fillable links:
   - **Drive folder** → Key Links, EPM Start Here
   - **Expert Facing folder** → Key Links, EPM Start Here, Pod A Start Here
-  - **Bonus + Reimbursement forms** (responder link `https://docs.google.com/forms/d/<id>/viewform`)
+  - **Bonus + Reimbursement forms** — the link is the **responder** URL
+    `https://docs.google.com/forms/d/e/<1FAIpQL…>/viewform`, read live from
+    `forms.forms.get` → `responderUri` (mercor-mcp `google_workspace_drive_call`). NEVER the file-id
+    shape `https://docs.google.com/forms/d/<fileId>/viewform`, which only reaches the form via a
+    Google 301 and exposes the file id, and NEVER `/edit`, which opens the LIVE form's editor for
+    anyone with edit access (every EPM has it, via `<vertical>-core-team`). Cadre shipped all 7 of
+    its form links in the file-id shape and 2 of them as `/edit`; fixed 2026-08-01.
     → Key Links, Reimbursements & Bonus, Pod A, Announcements; reimbursement-only → Onboarding
     Welcome, Welcome to <V>
   - **EPM Training doc** → EPM Start Here · **Automations sheet** → Key Links
