@@ -63,6 +63,24 @@ PASS requires **both**:
 Condition 2 exists because a run against an empty or wrong volume also returns 200 and also
 completes. That is the exact failure this test is for, and a status-only check would call it green.
 
+### A PASSING smoke test scores 0 out of 1. Ignore the grade.
+
+The grade is **not** one of the two conditions, on purpose. `sparta_agentic_grading` scores the
+**deliverable file** a real Sparta task writes to `/tmp/outputs/`, and this fixture's prompt
+deliberately asks for a chat answer instead, so the grader finds an empty `/tmp/outputs/` and awards
+zero. Verified on Delphi 2026-08-02 9:01 AM PT: the agent read `qbo_exports/QBO_Balance_Sheet.xlsx`
+and reported Total Assets $5,901,411.29 from cell B29 correctly, the grader independently opened the
+same file and confirmed that figure, and still scored `0.0/1.0` with the reasoning "What the model
+produced: Nothing."
+
+So **a healthy campaign shows a red 0/1 in the Studio task panel.** Say so when handing the result to
+anyone, or they will read the score as the verdict and conclude a working pipeline is broken. The
+verdict is the container's file listing, nothing else.
+
+Do not "fix" this by scoring the smoke test. Making the prompt write to `/tmp/outputs/` would add
+deliverable-path coverage, but the fixture's whole value is being byte-identical on every vertical, so
+changing it makes past and future runs incomparable. That is a deliberate trade, not an oversight.
+
 ## What preflight checks, and what each failure means
 
 | Check | If it fails |

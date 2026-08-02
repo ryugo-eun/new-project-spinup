@@ -65,7 +65,10 @@ look production is what puts crons back on it.
 5. **22 AutoQC hooks** on a tasking world (4 on the Golden World Building world), each pointing at a qc_spec that exists **in the target campaign**. Hooks are a `/hooks` entity: not a world field, not in the clone bundle, not inherited when the builder spawns a writer world.
 6. The **`sparta_create_tasking_world`** remix's `base_world_id` points at **the target campaign's own `[Live New Flow] Final Tasking World`** (not the source's).
 7. **No cross-campaign references** anywhere (source env id, source campaign id, source world ids), and especially the ones baked into remix `remix_world_field_values`.
+8. **`task_schema` field parity with the source world.** A hand-built clone can silently drop a field. Delphi's hand-built sample world came out with 40 fields where every other live runner world (Panacea, Abacus, Atria, Rampart, and Delphi's own canonical worlds) has 41+, the missing one being the hidden `prometheus_submission_history` (`field_8c482d232e034b3296e9a9b614d040cc`). Diff the field ids against the source and fail loudly on a missing one; `PATCH /worlds/{id}` full-replaces `task_schema`, so repair is GET-append-PATCH-verify.
 Plus the **world file bundle** (the data the agent runs against), which lives outside the config bundle and must be re-synced per world (step 7).
+
+**Campaign-level, not per world:** the campaign's `world_remix_configs[*].world_remix_world_field_values.prometheus_environment_id` (the Sync to External Storage remix) must match the worlds' `taiga_environment_id`. A split here is invisible on every world page: Studio shows the right env on all 5 worlds while the file sync writes into the OTHER environment's bucket. Delphi sat split from 2026-07-31 to 2026-08-02. Use `restamp-taiga-env --inventory`, which reports the campaign reference alongside the world ones.
 
 ## Runner preflight fails in a fixed ORDER: fix all of these before you test-run
 With zero hooks the task never even reaches the runner: it strands in "Running Task AutoQC". Once
@@ -74,7 +77,15 @@ one and immediately hit the next. Establish ALL of them up front. The observed s
 Abacus clone, 2026-07-21):
 1. `must have exactly one Sparta grading world-level verifier (task_id IS NULL). Found 0` → invariant 2 (create the verifier).
 2. `World has no sparta_external_agent configured in its default agents. configured_agent_config_ids=['loop_agent']` → invariant 4 (repoint the default agent).
-3. trajectory goes to `error` with `platform_has_environment=False` / empty volume → world files never synced (step 7).
+3. trajectory goes to `error` with an empty volume → world files never synced (step 7).
+
+**Do NOT use `platform_has_environment` as the mount test.** It reads `False` on healthy Sparta-Env
+trajectories too, verified on a fully successful Delphi run 2026-08-02 whose container listed all 52
+files. Same for `final_answer`, which stays `None` on a good run because the External Fetcher writes
+into `trajectory_messages` / `trajectory_output` instead. The only trustworthy mount evidence is the
+**container's own `ls` output inside `trajectory_messages`**, showing the files under `/tmp/world/`
+with non-zero byte sizes. A freshly created trajectory is an empty shell until Taiga's results sync
+back, so re-read it a minute or two after the job reports success before judging.
 
 So the full make-runnable set is: **hooks + qc_specs + verifier + sparta_external_agent + env +
 files** (and `base_world_id`/scrub for the spawn pipeline). None of these come with the config clone.
@@ -189,10 +200,50 @@ FROM (SELECT world_id, world_name,
 - **Only canonical-flow worlds take the canonical hooks.** Flag an old-flow world (a "Golden" world with `grader_feedback`, or a different scrub id) for a Studio-team re-sync rather than hand-patching it.
 - **New tasking worlds cloned or spawned later inherit the same gaps.** The durable fix is for the Studio team to fold hooks, the full remix set and the env re-stamp into their clone/spawn. Re-run this skill on any new live tasking world until then.
 
+## OPT-IN: the claim flow (central tasking). Off by default.
+
+Default Sparta assumes **the writer creates their own task**, so creator == owner and every
+permission gates on `and_actor_created_required`. Some verticals want **central tasking**: an SPL
+seeds tasks, a writer claims one. As of 2026-08-02, **5 of 5 live verticals do NOT use this**
+(Panacea, Abacus, Atria, Rampart, and Delphi's own canonical worlds), so it stays off unless asked
+for. The nearest precedent in the wild is Vigil's `[Live] Consensus Labeling`, which has an
+`Available` entry status for pool-claiming.
+
+Modelled on `Delphi · Sample World 1` (`world_48aed704fcc94a698c66d7a0ff2d5e49`), hand-built by an
+engineer 2026-07-30. `test_add_claim_flow.py` asserts our generated edge matches theirs field for
+field, so there is one dialect, not two.
+
+```bash
+python3 add_claim_flow.py            # dry run
+python3 add_claim_flow.py --apply
+python3 fix_claim_gating.py --apply  # MANDATORY, not optional, see below
+```
+
+**Four changes, and a subset leaves the world broken:**
+
+1. An `Available for Claim` status where seeded tasks wait.
+2. A `claim_sample_task` edge out of it into `Task Writing`, `to_owned_by: actor` and
+   `and_actor_not_created_required: true`, so the claimant becomes the owner. **Never owner-gate this
+   edge** — the claimant does not own the task yet, so owner-gating makes it permanently unclaimable.
+3. `world_settings.annotator_visibility_require_assignment = false`. Without it the writer cannot
+   **see** an unclaimed task, so the Claim button never renders and the flow looks broken with every
+   other part correct. This is the likeliest half-done state.
+4. `fix_claim_gating.py`. Everything downstream gates on `created`, which is now false for the
+   claimant: they would see the Claim button, press it, and then be unable to edit what they claimed.
+
+**Do NOT widen the `task_edit_content` grant's `from_status_ids`.** Delphi's sample world went 7 → 14
+by adding the five `awaiting_*_fixes` sendback statuses plus Needs QC Revision and Running Preference
+Labels AutoQC. That was checked and rejected: **Panacea** (oldest, highest-volume) also runs 7, and
+every `Needs ... Fixes` status there has a `Start ... Fixes` edge into one of those same 7 editable
+statuses. The Needs-Fixes status is a deliberate non-editable waiting room with a one-click door back
+in, not a lockout. Widening makes tasks editable inside the waiting room.
+
 ## Files
 - `wire_world.py`: **step 4.** Wires one world through the campaign engine's own functions, so the result matches a campaign clone. Dry run by default, `--execute` to write, `--builder` for the GWB 4-hook set. Requires `clone-sparta-campaign` to be installed alongside; it aborts if the engine is missing.
 - `clone_and_wire_world.py`: steps 1 to 3b + 5 to 6 (config clone, test-world naming and description, env re-stamp, verifier, agent, base_world_id, scrub) plus verification.
-- `fix_claim_gating.py`: claim-gating repair.
+- `fix_claim_gating.py`: creator-gated → owner-gated, on the 5 review-claim edges AND the two `task_edit_content` grants. **Mandatory after `add_claim_flow.py`**; optional otherwise. Never widens the edit grant's `from_status_ids` (see below). Tests: `test_fix_claim_gating.py`.
+- `add_claim_flow.py`: **OPT-IN, off by default.** Converts a world to central tasking, see the section below. Tests: `test_add_claim_flow.py`.
+- `test-fixtures/`: real flow/status configs pulled from live Delphi, Panacea and the hand-built sample world on 2026-08-02, used by both test files. Re-pull them if Studio changes the canonical flow; a stale fixture makes both suites lie.
 - `references/autoqc-hooks.md`: the live-captured 22-hook inventory, the qc_spec map, every remap, the chain and verification.
 - `spinup.env.example` → copy to `spinup.env` (gitignored, never printed).
 - **Deleted 2026-07-29:** `provision_hooks.py`, `insert_hooks.py`, `references/canonical_hooks.json`. They were a second and third implementation of the hook port, and the JSON capture had drifted to 18 of 22 hooks.
@@ -201,4 +252,6 @@ Established on Abacus (`camp_930d4d8b84d2436497b2f3fcf79d483c`) 2026-07-13/21; s
 (`camp_63e11a2d…`) and Vigil (`camp_863f41af…`). `insert-autoqc-hooks` and `provision-autoqc-hooks`
 were merged into this skill 2026-07-29 and deleted, not archived. Mirrored to
 `~/Desktop/MERCOR/new-project-spinup/skills/clone-studio-world/` (scripts included, **not**
-`spinup.env`). Neither copy is in a git repo, so a disk loss takes both.
+`spinup.env`) by the `sync-skills.sh` Stop hook, which commits and pushes to
+`ryugo-eun/new-project-spinup` — so that mirror IS a git repo and IS the backup. The live
+`~/.claude/skills` copy is not under version control.

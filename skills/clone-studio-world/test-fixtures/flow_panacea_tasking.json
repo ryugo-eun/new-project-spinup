@@ -1,0 +1,442 @@
+{
+ "world_name": "[Live New Flow] Final Tasking World",
+ "flow_config": {
+  "flow_edges": [
+   {
+    "edge_id": "start_task_autoqc_review",
+    "from_status_ids": [
+     "aff2bb4d-0853-4ade-adfc-1756351a9a9f"
+    ],
+    "to_status_id": "eea4e78d-7fc9-4337-928e-8fca83bbcf4e",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Start Task AutoQC Review",
+    "action_theme": "#facc15",
+    "action_theme_icon": "Hand",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   },
+   {
+    "edge_id": "start_agent_run_review",
+    "from_status_ids": [
+     "896ecc57-9f87-4c50-885b-993665d6ebdf"
+    ],
+    "to_status_id": "05d23ffe-0077-4f62-af7d-c5bcaca5a2cb",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Start Trajectory Run Review",
+    "action_theme": "#facc15",
+    "action_theme_icon": "Hand",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   },
+   {
+    "edge_id": "start_failure_analysis_autoqc_review",
+    "from_status_ids": [
+     "3ff7a33e-8e3c-44dd-9e2d-a66f1115e083"
+    ],
+    "to_status_id": "ad72f317-4cad-4bc8-93a8-5ab48ef7fbb2",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Start Failure Analysis AutoQC Review",
+    "action_theme": "#facc15",
+    "action_theme_icon": "Hand",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   },
+   {
+    "edge_id": "reclaim_from_first_human_review_queue",
+    "from_status_ids": [
+     "awaiting_first_human_review"
+    ],
+    "to_status_id": "ad72f317-4cad-4bc8-93a8-5ab48ef7fbb2",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Reclaim from First Human Review Queue",
+    "action_theme": "#fef9c3",
+    "action_theme_icon": "Hand",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   },
+   {
+    "edge_id": "advance_to_preference_labels",
+    "from_status_ids": [
+     "c521d090-e30c-4db6-98cb-744199a69c18"
+    ],
+    "to_status_id": "9bc7a08c-63b8-4a7d-a5cb-d6cd7c5d1267",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Start Preference Labels",
+    "action_theme": "#1e3a8a",
+    "action_theme_icon": "circle-check",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   },
+   {
+    "edge_id": "start_preference_labels_autoqc_review",
+    "from_status_ids": [
+     "19b8b2cf-881c-45ff-b5bd-72168e51903d"
+    ],
+    "to_status_id": "75a801ec-d9ab-4783-b186-1ba72297a028",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Start Preference Labels Review",
+    "action_theme": "#a16207",
+    "action_theme_icon": "Hand",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   },
+   {
+    "edge_id": "reclaim_from_team_lead",
+    "from_status_ids": [
+     "c89da73d-def8-43ea-874d-06e228c23c69"
+    ],
+    "to_status_id": "75a801ec-d9ab-4783-b186-1ba72297a028",
+    "to_status_name_override": null,
+    "to_owned_by": "actor",
+    "to_owned_by_status_id": null,
+    "to_created_by": null,
+    "transition_name": "Reclaim from Review Queue",
+    "action_theme": "#fef9c3",
+    "action_theme_icon": "Hand",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_previously_owned_required": false,
+    "and_actor_not_previously_owned_required": false,
+    "and_actor_not_previously_owned_sibling_required": false,
+    "and_client_feedback": false,
+    "and_client_confirm": false,
+    "and_client_validate_required_fields": false,
+    "and_skip_diagnostics_review": false,
+    "and_require_autoqc_resolution": false,
+    "autoqc_resolution_module_names": null,
+    "and_require_autoqc_fresh": false,
+    "autoqc_freshness_module_names": null,
+    "and_require_autoqc_coverage": false,
+    "autoqc_coverage_module_names": null,
+    "and_require_autoqc_final_review": false,
+    "autoqc_final_review_module_names": null,
+    "outcome_kind": null,
+    "outcome_tracked_module_names": null,
+    "ui_annotator_primary": true,
+    "weight": 0.0,
+    "apply_to_multitask": false
+   }
+  ],
+  "action_grants": [
+   {
+    "action_grant_id": "a0b1c2d3-e4f5-6789-abcd-ef0123456789",
+    "from_status_ids": [],
+    "to_action": "task_create",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": [
+     "subrole_preset_writer",
+     "subrole_preset_reviewer"
+    ],
+    "and_actor_created_required": false,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "e12846bf-b0b5-4a76-8b6f-2af89e5b68fd",
+    "from_status_ids": [
+     "1d946e38-3d4b-4058-94ac-d68626e408be",
+     "661a23e6-2ac9-4e6c-ab53-8f2244de73ec",
+     "ad72f317-4cad-4bc8-93a8-5ab48ef7fbb2",
+     "05d23ffe-0077-4f62-af7d-c5bcaca5a2cb",
+     "9bc7a08c-63b8-4a7d-a5cb-d6cd7c5d1267",
+     "75a801ec-d9ab-4783-b186-1ba72297a028",
+     "eea4e78d-7fc9-4337-928e-8fca83bbcf4e"
+    ],
+    "to_action": "task_edit_content",
+    "actor_roles": [
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": [
+     "subrole_preset_writer",
+     "subrole_preset_reviewer"
+    ],
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "f21bd3e6-6d41-4773-987f-e01c378d8d15",
+    "from_status_ids": [
+     "72edbf87-e8de-417c-8848-21eff5650000",
+     "first_human_review"
+    ],
+    "to_action": "task_edit_content",
+    "actor_roles": [
+     "campaign_annotator",
+     "campaign_admin"
+    ],
+    "actor_subrole_ids": [
+     "subrole_preset_writer",
+     "subrole_preset_reviewer"
+    ],
+    "and_actor_created_required": false,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "grant_task_delete_admin",
+    "from_status_ids": [],
+    "to_action": "task_delete",
+    "actor_roles": [
+     "campaign_admin"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_created_required": false,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "grant_task_delete_creator",
+    "from_status_ids": [],
+    "to_action": "task_delete",
+    "actor_roles": [
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_created_required": true,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "e63ad26a-2222-4931-b7ca-e66c078613fa",
+    "from_status_ids": [],
+    "to_action": "task_edit_content",
+    "actor_roles": [
+     "campaign_admin"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_created_required": false,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "87b3e40d-8604-4691-9eef-f2a21e6a7e4c",
+    "from_status_ids": [],
+    "to_action": "task_remix",
+    "actor_roles": [
+     "campaign_admin",
+     "campaign_annotator"
+    ],
+    "actor_subrole_ids": null,
+    "and_actor_created_required": false,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   },
+   {
+    "action_grant_id": "grant_edit_reviewer_agent_runner_qc",
+    "from_status_ids": [
+     "05d23ffe-0077-4f62-af7d-c5bcaca5a2cb"
+    ],
+    "to_action": "task_edit_content",
+    "actor_roles": [
+     "campaign_annotator",
+     "campaign_admin"
+    ],
+    "actor_subrole_ids": [
+     "subrole_preset_reviewer"
+    ],
+    "and_actor_created_required": false,
+    "and_actor_not_created_required": false,
+    "and_actor_owns_required": false,
+    "and_actor_not_owns_required": false
+   }
+  ]
+ }
+}

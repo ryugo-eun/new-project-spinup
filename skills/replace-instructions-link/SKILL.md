@@ -58,6 +58,13 @@ Vigil's onboarding calendar, carried by cloned automations, is the `cid` beginni
 **Search for every one of these, not just Vigil's.** Cloning moved on from Vigil: Atria, Rampart and
 Cadre each inherited **Abacus's** doc id, so a Vigil-only scan reports a clean vertical that is not.
 
+**Hand-built worlds inherit it too, and the engine cannot see them.** Delphi's
+`Delphi · Sample World 1` (`world_48aed704fcc94a698c66d7a0ff2d5e49`, built by an engineer 2026-07-30
+by copying Abacus's structure) carries Abacus's doc in both `module_layout` and `module_layout_draft`,
+while Delphi's four canonical worlds carry a different id. So scan **every world in the campaign**,
+not just the four canonical names: `clone-sparta-campaign` only ever touches the canonical four, which
+is exactly how a hand-built world keeps a wrong link through an otherwise clean spinup.
+
 ## Inputs to collect first
 
 Ask in one pass, read it back, write nothing until the operator confirms.
