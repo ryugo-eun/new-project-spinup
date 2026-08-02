@@ -56,11 +56,31 @@ Run every area. A skipped area is reported as SKIPPED with the reason, never as 
 | D | Slack channels | all 9 present; the 3 renamed ones no longer carry default topics; announcements is plural | `provision-vertical-slack-channels` |
 | E | Canvases | **15** canvases exist and are shared into channels (13 core + Reviewer Roster in `#<v>-reviewers` + Weekly Availability in `#<v>-epms`); count remaining TBD links; instructions link is this vertical's | `create-vertical-canvases`, then `replace-instructions-link` surface 4 |
 | F | Calendars | Onboarding + Writer calendars exist; shared to tag-synced groups; not world-readable; owner is not a contractor alias | `add-vertical-calendars` |
-| G | Studio campaign + worlds | campaign exists; per tasking world: **hooks present**, world-level verifier exists, default agent is `sparta_external_agent`, taiga env is this campaign's, `prometheus_gcs_path` contains this world's id, instructions link is not the old Vigil doc; **campaign-level: the pipeline dashboards exist** (see G-dash below) | `clone-studio-world`, `replace-instructions-link`, `port-vertical-dashboards` |
+| G | Studio campaign + worlds | campaign exists; per tasking world: **hooks present**, world-level verifier exists, default agent is `sparta_external_agent`, taiga env is this campaign's, `task_schema` field count matches the source world, `prometheus_gcs_path` contains this world's id, instructions link is not the old Vigil **or Abacus** doc; **campaign-level: the pipeline dashboards exist** (see G-dash below) **and the sync remix's env matches the worlds' env** (see G-env below) | `clone-studio-world`, `replace-instructions-link`, `port-vertical-dashboards`, `restamp-taiga-env` |
 | H | Automations | the canonical 7; state per automation; **no foreign ids**; tag guard pairs match; bonus self-ID guard resolves to itself | `provision-vertical-automations` |
 | I | Bots | Studio Doctor deployed and responding; World File Upload bot deployed; cron switches | `add-vertical-bots` |
 | J | Drive + docs | folder tree cloned and renamed; **top folder shared to the `<v>-core-team` Google group as `writer`**; `Expert Facing` shared `reader` to the writer groups; both expert forms exist with response sheets linked; **the writer instructions doc exists, sits in `Expert Facing` not `[INT]`, and its BODY is this vertical's** (read it; a correct filename over a source-vertical body is the K7 failure mode again, and the doc is hand-recast so there is no skill guaranteeing it) | `new-vertical-drive-folder`, then a human for the instructions doc |
 | K | Numbers + candidate copy | the 7 live checks below (K6 retired). Every one of them is a promise to a real person, so a FAIL here is not cosmetic | `create-vertical-listing`, `create-vertical-teams-project`, `provision-vertical-automations` |
+
+### Area G-env: the campaign's sync remix env must match the worlds'
+
+The Taiga env id is not one field. Beyond every world's `world_custom_fields.taiga_environment_id`
+and the two `*_environment_id` values inside each runner world's remixes, there is **one at campaign
+level**: `world_remix_configs[*].world_remix_world_field_values.prometheus_environment_id`, on the
+Sync to External Storage remix.
+
+```
+python3 ~/.claude/skills/restamp-taiga-env/restamp_taiga_env.py --campaign camp_xxx --inventory
+```
+
+FAIL when the printed `env id totals` shows more than one env id. **Every per-world check can pass
+while this is wrong**, and the failure is silent in the worst way: Studio renders the correct env on
+all five world pages, and the file sync copies into the *other* environment's bucket, so the runner
+mounts a volume that does not exist. Delphi sat split this way from 2026-07-31 to 2026-08-02
+(11 references on its own env, 1 on Abacus's) and no existing check in this audit caught it.
+
+Fix is `restamp-taiga-env --to <the-worlds-env> --execute`, then re-run Sync to External Storage on
+any world you intend to test.
 
 ### Area G-dash: the pipeline dashboards
 
