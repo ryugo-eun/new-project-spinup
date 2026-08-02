@@ -1,0 +1,22 @@
+{
+  "_comment": "The canonical Sparta smoke-test task. Captured from Delphi's Test_T_1 task_a670600fa4924245aca52b1ed703ee11 on 2026-07-31, which ran green. Reuse VERBATIM on every vertical: the point of a smoke test is that the only variable is the campaign under test. The prompt is deliberately answerable from one file so a wrong answer means a real pipeline fault, not a hard question.",
+  "task_name_template": "Smoke Test - runner validation {date}",
+  "task_prompt_messages": [
+    {
+      "role": "user",
+      "content": "You are an accounting assistant. The company's financial records are in the filesystem/ and qbo_exports/ directories. Open qbo_exports/QBO_Balance_Sheet.xlsx and report the Total Assets figure as of December 31, 2024. State exactly which file you read and where you found the number."
+    }
+  ],
+  "expected_mounted_files": [
+    "filesystem/AR_Aging_Dec31_2024.xlsx",
+    "qbo_exports/QBO_Balance_Sheet.xlsx",
+    "qbo_imports/journal_entries.csv"
+  ],
+  "file_count": 52,
+  "source": {
+    "campaign": "camp_0f78b4fcd3a84b8fbe4a3f75b0a8deaa",
+    "world": "world_066f765a84434762932d98e6f67381a3",
+    "snapshot": "snap_ce551c7ead994df3a8c9a4d6fcb0a099",
+    "captured_at_pt": "2026-07-31 18:26"
+  }
+}

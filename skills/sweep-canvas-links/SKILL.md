@@ -56,12 +56,35 @@ writes together; a write based on a stale read overwrites someone else's edit.
 |---|---|---|
 | Instructions doc | the vertical's own Google Doc | open it, confirm it is this vertical's content, not Panacea's or Vigil's |
 | Drive folders | `<Domain> (Project <Vertical>)` under Sparta drive `1ZkXpFKOl4EbL7w06EMb64LHEnSF9p3PC` | folder id resolves and the title carries no `{{VERTICAL}}` token |
-| Expert forms | Bonus Compensation + LLM Usage Reimbursement in `Expert Facing` | form opens; a form can exist with no response sheet linked, which is a separate defect |
+| Expert forms | Bonus Compensation + LLM Usage Reimbursement in `Expert Facing`; take the URL from `forms.forms.get` → `responderUri` | see the form-link rule below; also `publishSettings.publishState.isAcceptingResponses` must be true, and a form can exist with no `linkedSheetId`, which is a separate defect |
 | Calendars | `list_calendars` | **base64-decode the cid and match it to the live calendar id** |
 | SVA dashboard | `https://sva-pi.vercel.app/campaigns/<camp_id>/` | campaign id is this vertical's |
 | Automations sheet | the vertical's Ops folder | |
 | Org chart image | Slack file `F0BHESJ76C9`, hosted by a message in `#abacus-pod-a` | **do not delete that hosting message**, every vertical's Information Station embeds it |
 | Studio | see Step 4 | |
+
+### Form links: only the responder URL counts as `OK`
+
+A form has three URLs and only one belongs in a canvas. Class anything else `STALE` and rewrite it.
+
+- **Right:** `https://docs.google.com/forms/d/e/<1FAIpQL…>/viewform`, copied from
+  `forms.forms.get` → `responderUri`. Abacus's live canvases use this shape; it is the reference.
+- **Wrong, silently:** `https://docs.google.com/forms/d/<fileId>/viewform`. It does reach the form
+  (Google 301s it to the responder URL, confirmed by curl 2026-08-01) so it never looks broken, but
+  it depends on that redirect and exposes the file id. Cadre had all 7 links in this shape.
+- **Wrong, dangerously:** any `/edit` URL. It opens the LIVE form's editor, and every EPM has edit
+  access through `<vertical>-core-team`, so a click can change the questions writers are answering.
+  Cadre's Key Links canvas had both rows as `/edit`, one of them behind display text that read
+  `/viewform`. **Check the href, never the link text.**
+- **Not a defect:** the reimbursement form returns 401 to an unauthenticated fetch while the bonus
+  form returns 200. Its receipt-upload question forces a Google sign-in; Abacus's pair behaves
+  identically. Verify these two by reading `responderUri`, not by curl status.
+
+Cadre's own values, verified live 2026-08-01: bonus form file `1PXS4ocjAyAYkNA7SbDiM-8fkVH9yQ_FQQZsu8Hqr20M`
+→ responder `1FAIpQLSeF0XMwJLd3aL-Xsqmq80yAwvwSXAguFz71Z_nUgtNMueOnGg`; reimbursement form file
+`1gnzekjVdzkzMKs1LVN_fWdqC6nvSwKqwa7Lk48rlXT4` → responder
+`1FAIpQLSeaTEr7246aySpgqeEFH4Itbft8g6la_WCSnHRzdsrQoZ6iNQ`. Ryu's canonical form adds
+`?usp=sharing&ouid=114776486065354327206`; keep that query string.
 
 ## Step 3: the instructions link
 
