@@ -1,0 +1,87 @@
+id,account_number,name,account_type,classification
+1010,1010,Cash - Operating Checking,Bank,Asset
+1020,1020,Cash - Payroll Checking,Bank,Asset
+1040,1040,Cash - Merchant/Lockbox,Bank,Asset
+1100,1100,Accounts Receivable - Trade,Other Current Asset,Asset
+1180,1180,Allowance for Doubtful Accounts,Other Current Asset,Asset
+1190,1190,Disputed/Chargeback Receivable,Other Current Asset,Asset
+1200,1200,Prepaid Insurance,Other Current Asset,Asset
+1210,1210,Prepaid Expenses - Other,Other Current Asset,Asset
+1250,1250,Vendor Deposits (Non-Monetary),Other Current Asset,Asset
+1300,1300,Inventory - Warehouse (Landed),Other Current Asset,Asset
+1310,1310,Inventory - In Transit,Other Current Asset,Asset
+1320,1320,Inventory - Quality Hold,Other Current Asset,Asset
+1330,1330,Landed Cost / In-Transit Clearing,Other Current Asset,Asset
+1350,1350,Inventory Reserve - Obsolescence/Expiry,Other Current Asset,Asset
+1400,1400,Leasehold Improvements - Warehouse Buildout,Fixed Asset,Asset
+1410,1410,Racking & Storage Systems,Fixed Asset,Asset
+1420,1420,Refrigeration & Cold-Storage Systems,Fixed Asset,Asset
+1430,1430,Dock & Material-Handling Equipment,Fixed Asset,Asset
+1440,1440,Forklifts & Powered Equipment,Fixed Asset,Asset
+1450,1450,Delivery Fleet - Owned,Fixed Asset,Asset
+1460,1460,Office & IT Equipment,Fixed Asset,Asset
+1490,1490,Accumulated Depreciation,Fixed Asset,Asset
+1500,1500,ROU Asset - Warehouse Building (Operating),Fixed Asset,Asset
+1510,1510,ROU Asset - Cold-Storage Equipment (Finance),Fixed Asset,Asset
+1520,1520,ROU Asset - Delivery Fleet (Operating),Fixed Asset,Asset
+1590,1590,Accumulated Amortization - ROU (Finance),Fixed Asset,Asset
+2000,2000,Accounts Payable - Trade (USD),Other Current Liability,Liability
+2010,2010,Accounts Payable - Foreign Currency (FC),Other Current Liability,Liability
+2050,2050,Credit Card Payable,Other Current Liability,Liability
+2100,2100,Accrued Payroll,Other Current Liability,Liability
+2110,2110,Accrued Payroll Taxes,Other Current Liability,Liability
+2120,2120,Accrued Employee Benefits,Other Current Liability,Liability
+2150,2150,Accrued Freight / Duty / Landed Cost,Other Current Liability,Liability
+2200,2200,Customer Deposits / Advances,Other Current Liability,Liability
+2210,2210,Customer Promo/Rebate Accrual,Other Current Liability,Liability
+2250,2250,Deferred Revenue - Seasonal Programs,Other Current Liability,Liability
+2310,2310,Sales Tax Payable,Other Current Liability,Liability
+2400,2400,Lease Liability - Operating (Current),Long Term Liability,Liability
+2410,2410,Lease Liability - Operating (Non-Current),Long Term Liability,Liability
+2420,2420,Lease Liability - Finance (Current),Long Term Liability,Liability
+2430,2430,Lease Liability - Finance (Non-Current),Long Term Liability,Liability
+2700,2700,Equipment/Fleet Note Payable,Other Current Asset,Liability
+3000,3000,Member Capital - Atlas Holdings,Equity,Equity
+3010,3010,Member Capital - Member B,Equity,Equity
+3020,3020,Member Capital - Member C,Equity,Equity
+3100,3100,Member Distributions,Equity,Equity
+3200,3200,Retained Earnings,Equity,Equity
+4010,4010,Revenue - Independent Retail/Specialty,Income,Revenue
+4020,4020,Revenue - Regional Chain Retail,Income,Revenue
+4030,4030,Revenue - Restaurant/Foodservice,Income,Revenue
+4040,4040,Revenue - Wholesale Marketplace,Income,Revenue
+4050,4050,Revenue - Seasonal/Holiday Programs,Income,Revenue
+4080,4080,Contra-Revenue - Promo/Slotting Allowances,Income,Revenue
+4090,4090,Other Operating Revenue,Income,Revenue
+5010,5010,COGS - Independent Retail/Specialty,Cost of Goods Sold,COGS
+5020,5020,COGS - Regional Chain Retail,Cost of Goods Sold,COGS
+5030,5030,COGS - Restaurant/Foodservice,Cost of Goods Sold,COGS
+5040,5040,COGS - Wholesale Marketplace,Cost of Goods Sold,COGS
+5050,5050,COGS - Seasonal/Holiday Programs,Cost of Goods Sold,COGS
+5100,5100,Inventory Write-off - Expiry/Spoilage,Cost of Goods Sold,COGS
+5150,5150,Supplier Rebates - COGS Offset,Cost of Goods Sold,COGS
+5200,5200,Inbound Freight & Duty Expensed (period),Cost of Goods Sold,COGS
+6010,6010,Wages - Warehouse/Operations,Expense,OpEx
+6020,6020,Wages - Delivery/Drivers,Expense,OpEx
+6030,6030,Wages - Sales/Account Mgmt,Expense,OpEx
+6040,6040,Wages - Administration,Expense,OpEx
+6070,6070,Payroll Taxes - Employer,Expense,OpEx
+6080,6080,Employee Benefits,Expense,OpEx
+7110,7110,Utilities,Expense,OpEx
+7120,7120,Telephone & Internet,Expense,OpEx
+7150,7150,Warehouse Supplies & Consumables,Expense,OpEx
+7200,7200,Advertising & Marketing,Expense,OpEx
+7300,7300,Insurance - Property/Fleet/Cargo,Expense,OpEx
+7400,7400,Professional Services,Expense,OpEx
+7410,7410,IT & Software Subscriptions,Expense,OpEx
+7520,7520,Bank & Merchant Fees,Expense,OpEx
+7600,7600,Depreciation Expense,Expense,OpEx
+7650,7650,Amortization - ROU (Finance Lease),Expense,OpEx
+7700,7700,Lease Expense - Operating,Expense,OpEx
+7710,7710,Repairs & Maintenance,Expense,OpEx
+7900,7900,Bad Debt / Misc Expense,Expense,OpEx
+8100,8100,Interest Expense - Finance Lease,Other Expense,Other Exp
+8110,8110,Interest Expense - Notes Payable,Other Expense,Other Exp
+8200,8200,FX Gain/(Loss) - Unrealized,Other Expense,Other Exp
+8210,8210,FX Gain/(Loss) - Realized,Other Expense,Other Exp
+8900,8900,Gain/(Loss) on Disposal of Fixed Assets,Other Expense,Other Exp

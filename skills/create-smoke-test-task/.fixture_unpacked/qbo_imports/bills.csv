@@ -1,0 +1,12 @@
+docnumber,vendorref_value,txndate,line_amount,amount_usd,currency,amount_fc,ap_account
+BILL-5001,Maison Lacroix SARL,2024-10-15,75950.00,75950.00,EUR,70000.00,2010 Accounts Payable - Foreign Currency (FC)
+BILL-5002,Guangzhou Tea & Spice Co,2024-10-15,87250.50,87250.50,CNY,621000.00,2010 Accounts Payable - Foreign Currency (FC)
+BILL-5003,Highland Provisions Ltd,2024-11-15,50800.00,50800.00,GBP,40000.00,2010 Accounts Payable - Foreign Currency (FC)
+BILL-5004,Carolina Electrical,2024-11-20,48000.00,48000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5005,Storfit Systems,2024-11-20,62000.00,62000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5006,ColdTech Inc,2024-11-20,95000.00,95000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5007,BuildRight GC,2024-11-20,120000.00,120000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5008,First Lowcountry Bank,2024-11-20,15000.00,15000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5009,Carolina Electrical,2024-11-20,70000.00,70000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5010,ColdTech Inc,2024-11-20,80000.00,80000.00,USD,,2000 Accounts Payable - Trade (USD)
+BILL-5011,Storfit Systems,2024-11-20,50000.00,50000.00,USD,,2000 Accounts Payable - Trade (USD)

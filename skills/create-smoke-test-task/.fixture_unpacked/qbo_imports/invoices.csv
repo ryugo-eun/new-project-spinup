@@ -1,0 +1,11 @@
+docnumber,customerref_value,txndate,duedate,amount,ar_account,class
+INV-1001,Coastal Markets,2024-11-15,2024-12-15,140000.00,1100 Accounts Receivable - Trade,Independent Retail
+INV-1002,Harbor Grocers,2024-11-15,2024-12-15,116000.00,1100 Accounts Receivable - Trade,Independent Retail
+INV-1003,Palmetto Provisions,2024-11-15,2024-12-15,72000.00,1100 Accounts Receivable - Trade,Independent Retail
+INV-1004,Southeast Grocery Group,2024-11-15,2024-12-15,213000.00,1100 Accounts Receivable - Trade,Regional Chain
+INV-1005,Lowcountry Foodservice,2024-11-15,2024-12-15,112000.00,1100 Accounts Receivable - Trade,Foodservice
+INV-1006,Charleston Restaurant Co,2024-11-15,2024-12-15,63000.00,1100 Accounts Receivable - Trade,Foodservice
+INV-1007,Palmetto Wholesale,2024-11-15,2024-12-15,62000.00,1100 Accounts Receivable - Trade,Wholesale
+INV-1008,Seasonal Gifts LLC,2024-11-15,2024-12-15,52000.00,1100 Accounts Receivable - Trade,Seasonal
+INV-1009,Atlantic Specialty Dist,2024-11-15,2024-12-15,89000.00,1100 Accounts Receivable - Trade,Regional Chain
+INV-1010,Marsh & Pine Markets,2024-11-15,2024-12-15,16000.00,1100 Accounts Receivable - Trade,Independent Retail

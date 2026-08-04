@@ -1,0 +1,45 @@
+docnumber,txndate,memo,line_accountref_value,line_accountref_id,line_amount,line_postingtype
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Cash - Operating Checking,1010,520000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Cash - Payroll Checking,1020,55000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Cash - Merchant/Lockbox,1040,70000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accounts Receivable - Trade,1100,815000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Allowance for Doubtful Accounts,1180,32000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Prepaid Insurance,1200,84000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Prepaid Expenses - Other,1210,30000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Vendor Deposits (Non-Monetary),1250,140000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Inventory - Warehouse (Landed),1300,1180000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Inventory - In Transit,1310,240000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Inventory - Quality Hold,1320,40000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Inventory Reserve - Obsolescence/Expiry,1350,60000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Leasehold Improvements - Warehouse Buildout,1400,640000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Racking & Storage Systems,1410,380000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Refrigeration & Cold-Storage Systems,1420,720000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Dock & Material-Handling Equipment,1430,150000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Forklifts & Powered Equipment,1440,210000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Delivery Fleet - Owned,1450,360000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Office & IT Equipment,1460,120000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accumulated Depreciation,1490,1180000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,ROU Asset - Warehouse Building (Operating),1500,900000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,ROU Asset - Cold-Storage Equipment (Finance),1510,460000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,ROU Asset - Delivery Fleet (Operating),1520,300000.00,Debit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accumulated Amortization - ROU (Finance),1590,90000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accounts Payable - Trade (USD),2000,560000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accounts Payable - Foreign Currency (FC),2010,300000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Credit Card Payable,2050,48000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accrued Payroll,2100,70000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accrued Payroll Taxes,2110,18000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accrued Employee Benefits,2120,22000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Accrued Freight / Duty / Landed Cost,2150,40000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Customer Deposits / Advances,2200,130000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Customer Promo/Rebate Accrual,2210,35000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Deferred Revenue - Seasonal Programs,2250,90000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Sales Tax Payable,2310,60000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Lease Liability - Operating (Current),2400,153817.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Lease Liability - Operating (Non-Current),2410,756183.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Lease Liability - Finance (Current),2420,97566.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Lease Liability - Finance (Non-Current),2430,356558.85,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Equipment/Fleet Note Payable,2700,300000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Member Capital - Atlas Holdings,3000,742000.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Member Capital - Member B,3010,445200.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Member Capital - Member C,3020,297200.00,Credit
+JE-OPEN-2024,2024-01-01,Opening balances FY2024,Retained Earnings,3200,1530475.15,Credit

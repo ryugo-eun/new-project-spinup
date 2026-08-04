@@ -1,0 +1,10 @@
+txn_date,description,deposit,withdrawal,bank_id,bank_account,import_batch_id
+2024-12-03,Customer deposit - Southeast Grocery,128400.00,,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-06,Supplier wire - Maison Lacroix,,74250.00,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-10,Customer deposit - Coastal Markets,96000.00,,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-12,Broker fee - customs ENT-2024-0211,,850.00,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-16,ACH - warehouse utilities,,7300.00,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-19,Customer deposit - Lowcountry Foodservice,62000.00,,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-20,Outbound wire - Productos del Valle,,58900.00,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-27,Lease payment - cold-storage equipment,,10297.00,1010,1010 Cash - Operating Checking,DEC2024-OPS
+2024-12-31,Bank service charge,,180.00,1010,1010 Cash - Operating Checking,DEC2024-OPS

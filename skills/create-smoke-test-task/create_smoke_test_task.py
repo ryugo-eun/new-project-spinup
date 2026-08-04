@@ -23,7 +23,7 @@ test exists to catch.
 Auth: RLS_API_KEY must have WRITE scope on the campaign (~/Desktop/MERCOR/.env.local).
 Transport: curl. Studio is behind Cloudflare, which 403s Python urllib.
 """
-import argparse, datetime, json, os, subprocess, sys, time, zipfile
+import argparse, datetime, json, os, re, subprocess, sys, time, zipfile
 
 BASE = os.environ.get("RLS_BASE_URL", "https://api.studio.mercor.com").rstrip("/")
 KEY = os.environ.get("RLS_API_KEY")
@@ -80,12 +80,24 @@ def get_world(world_id):
     return d.get("world", d)
 
 
+# Some campaigns suffix their world names with the vertical, e.g. "Test_T_1 (Capitol)" (Capitol,
+# 2026-08-03, kept deliberately). Accept ONE trailing parenthetical so those campaigns resolve,
+# and nothing else: a live writer world like "W01 CPMP Oversight Review (Capitol)" still does not
+# match, and two worlds both reducing to Test_T_1 still abort as ambiguous.
+VERTICAL_SUFFIX_RE = re.compile(r"\s*\([^()]{1,40}\)\s*$")
+
+
+def is_test_world_name(name):
+    n = (name or "").strip()
+    return n == TEST_WORLD_NAME or VERTICAL_SUFFIX_RE.sub("", n).strip() == TEST_WORLD_NAME
+
+
 def find_test_world(force_world):
     """Resolve Test_T_1 in this campaign. Refuses any other world unless --world is given
     explicitly, so a smoke test can never be seeded into a live tasking world by a typo."""
     if force_world:
         w = get_world(force_world)
-        if w.get("world_name") != TEST_WORLD_NAME:
+        if not is_test_world_name(w.get("world_name")):
             print(f"  !! --world points at {w.get('world_name')!r}, not {TEST_WORLD_NAME}. "
                   f"Continuing because you named it explicitly.")
         return w
@@ -93,7 +105,7 @@ def find_test_world(force_world):
     if code != 200:
         sys.exit(f"ABORT: GET /worlds/ -> {code}: {str(wl)[:300]}")
     lst = wl["worlds"] if isinstance(wl, dict) and "worlds" in wl else wl
-    hits = [w for w in lst if (w.get("world_name") or "").strip() == TEST_WORLD_NAME]
+    hits = [w for w in lst if is_test_world_name(w.get("world_name"))]
     if not hits:
         names = ", ".join(repr(w.get("world_name")) for w in lst)
         sys.exit(f"ABORT: no world named {TEST_WORLD_NAME!r} in {CAMPAIGN}.\n"
@@ -188,9 +200,20 @@ def upload_files(w, replace):
     args.append(f"{BASE}/snapshots/world/{wid}/update")
     p = subprocess.run(args, capture_output=True, text=True)
     txt, _, code = p.stdout.rpartition("\n")
-    if code.strip() != "200":
+    # The endpoint answers 201 Created, not 200 (Capitol, 2026-08-03): a 200-only check aborted
+    # AFTER all 52 files had already landed, so the run looked like an upload failure when the
+    # upload had succeeded. Accept any 2xx and let the file-count check below be the real gate.
+    if not code.strip().startswith("2"):
         sys.exit(f"ABORT: snapshot update -> {code}: {txt[:400]}")
     print(f"  new snapshot: {json.loads(txt).get('snapshot_id')}")
+    # Re-read rather than trust the POST body. A partial upload must fail here, because the runner
+    # mounting 40 of 52 files still produces a run that completes.
+    code, snap = api("GET", f"/snapshots/world/{wid}")
+    landed = (snap.get("files") or []) if code == 200 else []
+    if len(landed) != len(names):
+        sys.exit(f"ABORT: snapshot holds {len(landed)} file(s) after upload, expected {len(names)}. "
+                 f"Do not run the test against a partial volume.")
+    print(f"  verified {len(landed)} file(s) in the world snapshot")
 
 
 def sync_files(w, sync_cfg, wait):
