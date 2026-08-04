@@ -41,6 +41,7 @@ Anything else is a verbatim clone: task status ids are shared across Sparta vert
 """
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -153,7 +154,17 @@ def resolve_golden_world(target_camp, target_label, status_id):
     Returns (world_id, note). world_id is "" when the view must be skipped instead.
     """
     worlds = as_list(call(target_camp, "GET", f"/worlds/?campaign_id={target_camp}"))
-    golden = next((w for w in worlds if w.get("world_name") == GOLDEN_WORLD_NAME), None)
+
+    # Some verticals keep a trailing "(Vertical)" suffix on their world names (Ryu's call for
+    # Capitol, 2026-08-03), so an exact-name match finds nothing and the view gets skipped even
+    # though the world is right there. Strip ONE trailing parenthetical before comparing, the
+    # same normalisation clone-sparta-campaign's matcher uses.
+    def canon(name):
+        return re.sub(r"\s*\([^()]*\)\s*$", "", name or "").strip()
+
+    golden = next(
+        (w for w in worlds if canon(w.get("world_name")) == GOLDEN_WORLD_NAME), None
+    )
     if not golden:
         return "", (
             f"{target_label} has no world named \"{GOLDEN_WORLD_NAME}\" "
