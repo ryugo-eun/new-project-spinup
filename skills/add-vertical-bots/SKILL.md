@@ -83,7 +83,7 @@ In `~/Desktop/MERCOR/doctor-bot`, mirror the most recent vertical (diff `git sho
 
    Verify with a script that walks `vercel.json` and confirms (a) every cron path has a matching `api/*.ts` file, (b) every endpoint is scheduled, and (c) each endpoint's registered `makeCronHandler` name equals its filename. A path/file mismatch fails silently — the cron just never runs.
 
-Verify: `node --test --experimental-strip-types lib/panacea/cron-campaigns.test.ts` and `npx tsc --noEmit` (ignore any pre-existing errors in untracked `scripts/*` probe files - they aren't yours). Then commit **only these files** (`git add` them explicitly) with a `feat(<key>): wire the <Vertical> vertical into the multi-campaign bot` message noting the crons ship OFF, and `git push origin master`.
+Verify: `node --test --experimental-strip-types lib/panacea/cron-campaigns.test.ts` and `npx tsc --noEmit` (ignore any pre-existing errors in untracked `scripts/*` probe files - they aren't yours). Then commit **only these files** (`git add` them explicitly) with a `feat(<key>): wire the <Vertical> vertical into the multi-campaign bot` message noting the crons ship OFF. Then **branch, push the branch, open a PR into `master`** per the branch/preview/PR rule — do NOT push `master` directly. The code is NOT live yet; Step 6 is what makes it live, and nothing before Step 6 can work.
 
 All crons ship OFF (Redis switch, off by default). Nothing fires until each is enabled BY EXACT NAME — **`/doc cron enable` takes one full cron id and rejects anything not in `ALL_CRONS`; there is no wildcard.** So it is three commands: `/doc cron enable <key>-unclaim-reviews`, `<key>-advance`, `<key>-nudge-writer-to-hand-off`.
 
@@ -127,7 +127,7 @@ In `~/Desktop/MERCOR/panacea-world-upload-bot` (template = the last `feat(<verti
 5. `.github/workflows/upload.yml` — pass `<KEY>_SLACK_BOT_TOKEN` (and `<KEY>_ADMIN_SLACK_ID` only if using DMs, not a channel).
 6. `CLAUDE.md` — add the config-table row + a status entry (channel routing + remaining setup steps).
 
-Verify: `npx tsc --noEmit` and `npm test` (expect the full suite green). Commit **only these files**, `git push origin main`.
+Verify: `npx tsc --noEmit` and `npm test` (expect the full suite green). Commit **only these files**, then **branch, push the branch, open a PR into `main`** per the branch/preview/PR rule — do NOT push `main` directly. As above: the tenant is NOT live until Step 6 merges it.
 
 ## Step 4 — PASTE the manifests in the chat (with the names baked in)
 
@@ -143,11 +143,13 @@ Copy the exact shapes from the two most recent per-vertical manifests in each re
 
 Alongside each pasted block, state where its Signing Secret and Bot Token go (the exact env var names, per repo, Vercel vs GitHub Actions) and which channel to invite the bot to — so the human never has to scroll back to Step 5 to act on what they just pasted.
 
-## Step 5 — ⏸ PAUSE: human creates the Slack apps + sets secrets
+## Step 5 — ⏸ PAUSE: human creates the Slack apps + sets secrets (BEFORE the merge, on purpose)
 
 Hand the human this checklist and WAIT for confirmation of each before proceeding.
 
-**Slack (both apps, in the vertical's workspace):** Create app → From manifest → paste the manifest → Install → invite each bot to its channel. For the doctor app, replace the bypass secret in the three Request URLs first.
+> **This step runs BEFORE the code is live, and that is the point.** Env vars and Slack apps are both inert while the vertical's code sits on a branch: the doctor bot only reads a `_<KEY>` suffix that `APP_DEFS` names, and the upload bot's receiver filters tenants on a signing secret its `tenants()` list has to contain. So setting env now costs nothing and can break nothing. Then Step 6's merge produces **one** production deploy that carries the code AND bakes the env, which is why the old "redeploy to bake the env" step is gone. Doing it the other way round is what produced two "the app did not respond" failures on Capitol (2026-08-03): the app existed, the secrets were set, the code was on a branch, and both bots answered 401.
+
+**Slack (both apps, in the vertical's workspace):** Create app → From manifest → paste the manifest → Install → invite each bot to its channel. The doctor manifest you pasted in Step 4 already has the bypass secret filled in, so it goes in as-is.
 
 **Vercel — doctor bot** (project `panacea-cli-slack`): set `SLACK_SIGNING_SECRET_<KEY>` (Basic Information → Signing Secret) and `SLACK_BOT_TOKEN_<KEY>` (OAuth & Permissions → Bot User OAuth Token, `xoxb-…`).
 
