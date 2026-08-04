@@ -100,6 +100,68 @@ Cadre channel IDs (workspace URL `ff0e0e6a7578518.slack.com`; resolved via `slac
 
 Bot-channel canvases (#cadre-doctor-bot, #cadre-world-file-upload-bot) NOT created: clone Panacea /doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Cadre. Every title carries "Cadre" (Ryu's rule, so it's obvious which canvas goes in which channel).
 
+## Capitol canvases (Government & Public Policy vertical; workspace `Capitol`, created 2026-08-03)
+
+Cloned from the Abacus set (Cadre's copies used as the source for Key Links, Reimbursements, Weekly
+Availability and Reviewer Roster, which Abacus either lacks or has in an older shape). Abacus→Capitol,
+domain accounting→Government & Public Policy (Capitol's writer role = "Government & Public Policy
+Expert" per `get_project`), channel mentions repointed to Capitol's IDs, SVA dashboard →
+`camp_cdc32ae248e54fbc9b2583db0dd4f5cf` (verified live via Studio `GET /campaigns/`, not from memory).
+Insightful timer set to the convention "Sparta - Capitol - World" / "Taskwriting" (CONFIRM the exact
+Insightful project name; Capitol's live Insightful projects are named `capitol-world-building`,
+`capitol-task-writing`, `capitol-reviewers` and `Sparta-Capitol - Task` per `list_project_audiences`,
+so the timer label in the canvases may need correcting). All 15 are STANDALONE (owned by Ryu); user
+attaches each to its channel by hand.
+
+**Capitol is the first vertical whose Drive artifacts existed BEFORE the canvases**, so unlike Cadre
+these went in live at creation rather than as TBDs: top Drive folder `1rEhG9_SwXph02vYef4O90HFawDMp1pzM`,
+Expert Facing `1W79O65vn-jMVMEhJm2Aemqjes9x3lduv`, EPM Training doc
+`1h63Q0cIRNzd_QX3X0_9n7TDjQVg2_nF3x5DSBHUm4YQ`, Automations sheet
+`1wyEu6r4UbI1zvARvSQWnfnRsj1Dr51fOs-510739XBE`, bonus form responder
+`1FAIpQLSc0kFaQKenzXVT7yELXDo7tZk5J1s3KI32cVfeKtOBjNBgLUg`, reimbursement form responder
+`1FAIpQLSfLFm158XMUTO2CZb2NhxLgTgF_88crNlfA6qL8KxA2eGVDPw` (responder shape from `forms.forms.get`,
+per the Cadre lesson).
+
+Capitol channel IDs (workspace URL `1c6854a533b4e18.slack.com`; all 14 PRIVATE, resolved via
+`slack_search_channels` query "capitol" with `channel_types=public_channel,private_channel`):
+#capitol-epms `C0BLKP7UL12`, #capitol-pod-a `C0BLGD8BAQ2`, #capitol-onboarding `C0BLG2PN2JW`,
+#capitol-onboarding-support `C0BLCPWDL4V`, #capitol-reviewers `C0BL9R6FBMH`,
+#capitol-announcement `C0BL0K5AY5V`, #capitol-general `C0BLKPE6FPE`,
+#capitol-technical-issues `C0BLG2Z642E`, #capitol-maven-support `C0BLD5FKUG5`,
+#capitol-robot-advice `C0BL9R847GT`, #capitol-help-desk `C0BLCMUBXDK`, #capitol-random `C0BL0MGS65D`,
+#capitol-doctor-bot `C0BLJBCP73K`, #capitol-world-file-upload-bot `C0BL12FB24F`.
+
+**Capitol channel-set differences vs Cadre:** Capitol DOES have its own `#capitol-general` (so
+"Welcome to Capitol" gets its own channel, Abacus-style) and its own `#capitol-onboarding-support`
+(so the two onboarding canvases split across two channels, Abacus-style). Capitol has BOTH
+`#capitol-maven-support` and `#capitol-robot-advice`; the Maven canvas went to **maven-support** and
+robot-advice has no canvas. Announcement channel is singular `-announcement`, like Cadre.
+
+| Target channel | Canvas | Canvas ID |
+|---|---|---|
+| #capitol-epms | 📌 Capitol EPM Start Here | F0BMCEC0QG7 |
+| #capitol-epms | Capitol EPM Roster | F0BMQENN6A1 |
+| #capitol-epms | 🔗 Capitol Key Links | F0BMQESSZKP |
+| #capitol-epms | Capitol Reimbursements and Bonus Forms | F0BMTRF4SQ2 |
+| #capitol-epms | Capitol Weekly Availability | F0BMXGJJB8U (epms ONLY, per Ryu 2026-07-29) |
+| #capitol-pod-a | 🚀 Capitol Pod A: Start Here | F0BMVPN3SL9 |
+| #capitol-pod-a | 🚀 Capitol Information Station | F0BMMJSTKH9 |
+| #capitol-onboarding | ✅ Welcome to the Capitol Onboarding Channel! | F0BMTRV9X7C |
+| #capitol-onboarding-support | 🛟 Capitol Onboarding Support: Read Before Posting | F0BMVPWAQ7K |
+| #capitol-reviewers | 🔍 Welcome, Capitol Reviewers! | F0BMXGM6PU4 |
+| #capitol-reviewers | Capitol Reviewer Roster | F0BNN64AWSU |
+| #capitol-announcement | 📣 Capitol Announcements: Start Here | F0BMXH2B65S |
+| #capitol-general | 🧭 Welcome to Capitol | F0BNN6PBUQY |
+| #capitol-maven-support | 🤖 Capitol Maven Support: How to Use This Channel | F0BMTS56NG2 |
+| #capitol-technical-issues | 🛠️ Capitol Technical Issues: How to Get Help | F0BMXH827E0 |
+
+Still `(link TBD)` on Capitol: the **Instructions doc** (biggest unblock: 7 canvases), both
+**calendars** (5 canvases), **office-hours times**, **SSOT / Daily Syncs**, **Expert Tracker**,
+**Reviewer Guide**, **Review Tracker**, **Tasking Quick Guide** + the 5 **task walkthrough videos**
+(Abacus's Looms deliberately NOT carried across), **Reviewer Feedback Form**, **pod-lead and roster
+names**. Bot-channel canvases (#capitol-doctor-bot, #capitol-world-file-upload-bot) NOT created:
+clone Panacea /doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Capitol.
+
 ## Fixed assets and constraints
 
 - Org chart image: Slack file `F0BHESJ76C9`, hosted via a message in #abacus-pod-a. Embedded by the Information Station canvas. Do not delete the hosting message.
