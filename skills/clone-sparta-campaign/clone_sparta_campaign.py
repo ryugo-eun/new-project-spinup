@@ -145,6 +145,15 @@ HOOK_KEEP = ["hook_name", "hook_enabled", "hook_source_event", "hook_source_pred
 # Studio's UI clone suffixes world names. Two variants seen in the wild: "<name>- copy"
 # ([CLONE ME] copy) and "<name> - Copy" (Rampart). Trailing counter seen on repeat copies.
 COPY_SUFFIX_RE = re.compile(r"(\s*-\s*cop(?:y|ies)(?:\s*\(?\d+\)?)?)+\s*$", re.IGNORECASE)
+# Some operators rename the clone's worlds with a vertical suffix instead, e.g.
+# "Test_T_1 (Capitol)" (Capitol, 2026-08-03). Strip ONE trailing parenthetical so those worlds
+# still adopt. Canonical names use square brackets, never parens, so this cannot eat part of a
+# real name, and canonical_of() still requires an EXACT match on what is left.
+VERTICAL_SUFFIX_RE = re.compile(r"\s*\([^()]{1,40}\)\s*$")
+# Keep the world names exactly as they are instead of renaming to canonical. Opt-in only:
+# every other skill (clone-studio-world, replace-instructions-link) resolves worlds by the exact
+# canonical name, so a kept suffix means those tools will not find these worlds.
+KEEP_WORLD_NAMES = os.environ.get("SPARTA_KEEP_WORLD_NAMES") == "1"
 # ================================================================
 
 EXECUTE = False
@@ -194,9 +203,10 @@ def worlds_list(campaign):
 def canonical_of(world_name):
     """Map a possibly copy-suffixed world name onto a canonical name, or None."""
     stripped = COPY_SUFFIX_RE.sub("", (world_name or "").strip()).strip()
-    for canon in CANONICAL_WORLDS:
-        if stripped.lower() == canon.lower():
-            return canon
+    for candidate in (stripped, VERTICAL_SUFFIX_RE.sub("", stripped).strip()):
+        for canon in CANONICAL_WORLDS:
+            if candidate.lower() == canon.lower():
+                return canon
     return None
 
 
@@ -263,6 +273,32 @@ def scrub(obj, replacements):
         if a and b and a != b:
             s = s.replace(a, b)
     return json.loads(s)
+
+
+def stamp_remix_envs(remixes, target_env):
+    """Set every *_environment_id inside every remix's field values to target_env.
+
+    Match on the KEY, never on a list of remix names: the set of remixes carrying an env id grew
+    from two to five the first time anyone looked (Abacus, 2026-07-30), and `prometheus_environment_id`
+    does not share the `taiga_` prefix.
+
+    This runs INDEPENDENTLY of world_custom_fields. Capitol (2026-08-03) had the custom field
+    already correct on both runner worlds while four remix values still pointed at Abacus's env,
+    so gating the remix pass on the custom field leaves exactly Atria's defect in place: a wrong
+    remix env reads as an empty Taiga result, which the advance sweeps answer with a re-dispatch.
+
+    Returns (new_remixes, [(remix_name, key, old_value)]) and never changes the remix count."""
+    out = json.loads(json.dumps(remixes or []))
+    fixed = []
+    for r in out:
+        vals = r.get("remix_world_field_values")
+        if not isinstance(vals, dict):
+            continue
+        for k, v in list(vals.items()):
+            if k.endswith("_environment_id") and isinstance(v, str) and v and v != target_env:
+                fixed.append((r.get("remix_name") or r.get("id"), k, v))
+                vals[k] = target_env
+    return out, fixed
 
 
 def require_taiga_env():
@@ -343,8 +379,11 @@ def inventory(target, tgt_worlds):
         gcs = wcf.get("prometheus_gcs_path")
         print(f"    {canon}")
         print(f"      id            {d['world_id']}")
-        print(f"      name          {d.get('world_name')!r}"
-              f"{'' if d.get('world_name') == canon else '   <- will rename to canonical'}")
+        name_note = ""
+        if d.get("world_name") != canon:
+            name_note = ("   <- kept (SPARTA_KEEP_WORLD_NAMES=1)" if KEEP_WORLD_NAMES
+                         else "   <- will rename to canonical")
+        print(f"      name          {d.get('world_name')!r}{name_note}")
         will_stamp = env != TARGET_ENV_ID and (canon in RUNNER_WORLDS or bool(env))
         print(f"      taiga env     {env}{'   <- will re-stamp' if will_stamp else ''}")
         print(f"      hooks         {len(hooks)}")
@@ -381,6 +420,14 @@ def rename_to_canonical(target, tgt_worlds):
     replace-instructions-link, this script's own re-runs) resolves worlds by the exact
     canonical name, so put the names back. Verified PATCH world_name -> 200, 2026-07-29."""
     print("\n[2] rename worlds to canonical names")
+    if KEEP_WORLD_NAMES:
+        print("    SKIPPED: SPARTA_KEEP_WORLD_NAMES=1, names left as-is")
+        for c, w in sorted(tgt_worlds.items()):
+            if w.get("world_name") != c:
+                warn(f"world name kept as {w['world_name']!r} (canonical is {c!r}); "
+                     f"clone-studio-world and replace-instructions-link match on the exact "
+                     f"canonical name and will NOT find this world")
+        return
     todo = [(c, w) for c, w in tgt_worlds.items() if w.get("world_name") != c]
     if not todo:
         print("    all names already canonical")
@@ -413,8 +460,18 @@ def restamp_env_and_strip_prometheus(target, full):
         body = {}
         if old_env and old_env != TARGET_ENV_ID:
             wcf = scrub(wcf, {old_env: TARGET_ENV_ID})
-            body["task_remix_configs"] = scrub(remixes, {old_env: TARGET_ENV_ID})
+            remixes = scrub(remixes, {old_env: TARGET_ENV_ID})
+            body["task_remix_configs"] = remixes
             print(f"    {canon}: env {old_env} -> {TARGET_ENV_ID} (custom fields + remixes)")
+        # Independent of the custom field: any *_environment_id in any remix must be the target env.
+        stamped, fixed = stamp_remix_envs(remixes, TARGET_ENV_ID)
+        if fixed:
+            if len(stamped) != len(remixes):
+                sys.exit(f"ABORT: remix count changed on {canon} "
+                         f"({len(remixes)} -> {len(stamped)}). Refusing to PATCH.")
+            body["task_remix_configs"] = stamped
+            for rname, key, oldv in fixed:
+                print(f"    {canon}: remix {rname!r} {key} {oldv} -> {TARGET_ENV_ID}")
         if canon in RUNNER_WORLDS or wcf.get("taiga_environment_id"):
             wcf["taiga_environment_id"] = TARGET_ENV_ID
         gcs = wcf.get("prometheus_gcs_path")
@@ -786,12 +843,22 @@ def verify(target, full):
         env = (w.get("world_custom_fields") or {}).get("taiga_environment_id")
         blob = json.dumps(w.get("task_remix_configs") or [])
         foreign = {m for m in re.findall(r"world_[0-9a-f]{32}", blob) if m not in own_ids}
-        name_ok = w.get("world_name") == canon
+        if KEEP_WORLD_NAMES:
+            name_ok = canonical_of(w.get("world_name")) == canon
+            name_desc = f"kept {w.get('world_name')!r}"
+        else:
+            name_ok = w.get("world_name") == canon
+            name_desc = "canonical" if name_ok else repr(w.get("world_name"))
         env_ok = (env == TARGET_ENV_ID) or (canon not in RUNNER_WORLDS and not env)
-        ok &= name_ok and env_ok and not foreign
-        print(f"    {'OK ' if (name_ok and env_ok and not foreign) else '!! '}{canon}: "
-              f"name={'canonical' if name_ok else repr(w.get('world_name'))}, env={env}, "
+        _, bad_remix_envs = stamp_remix_envs(w.get("task_remix_configs") or [], TARGET_ENV_ID)
+        good = name_ok and env_ok and not foreign and not bad_remix_envs
+        ok &= good
+        print(f"    {'OK ' if good else '!! '}{canon}: "
+              f"name={name_desc}, env={env}, "
               f"foreign world refs={sorted(foreign) or 'none'}")
+        if bad_remix_envs:
+            for rname, key, oldv in bad_remix_envs:
+                print(f"        !! remix {rname!r} {key} still {oldv}")
     _, camp = api("GET", f"/campaigns/{target}", target)
     cs = camp.get("campaign_settings") or {}
     cfgs = cs.get("pipeline_autoqc_configs") or []
