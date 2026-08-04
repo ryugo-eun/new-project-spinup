@@ -1,11 +1,13 @@
 ---
 name: add-vertical-bots
-description: Add the Studio Doctor bot (/doc + automation crons) AND the World File Upload bot to a new Sparta vertical, end to end. Interactive and human-in-the-loop - gathers the vertical's IDs, wires both repos (code only, committed + pushed), writes both Slack app manifests in the chat with the naming conventions baked in, PAUSES while the human adds Vercel/GitHub secrets and creates the Slack apps, then checks the deploys (redeploy-after-env for the doctor bot; the GitHub Action for the upload bot). Use during a new-vertical spinup, or when someone says "add the doctor bot to <vertical>", "add the world file upload bot to <vertical>", "wire the bots for the new vertical", "set up Studio Doctor for <vertical>".
+description: Add the Studio Doctor bot (/doc + automation crons) AND the World File Upload bot to a new Sparta vertical, end to end. Interactive and human-in-the-loop - gathers the vertical's IDs and the Vercel bypass secret up front, wires both repos on branches behind PRs, writes both Slack app manifests in the chat with the naming conventions and the bypass already filled in, PAUSES while the human creates the Slack apps and sets the Vercel/GitHub secrets, then has them MERGE both PRs (the step that actually makes either bot work) and verifies the live builds and the Action run. Use during a new-vertical spinup, or when someone says "add the doctor bot to <vertical>", "add the world file upload bot to <vertical>", "wire the bots for the new vertical", "set up Studio Doctor for <vertical>", or when a new vertical's bot answers "the app did not respond".
 ---
 
 # Add the Doctor + World File Upload bots to a new Sparta vertical
 
-Two bots, both multi-tenant off one shared deployment each. Adding a vertical is code + Slack-app + env, in that order. This skill does the code, hands you the manifests, and pauses on the human-only steps (Slack apps, Vercel/GitHub secrets), then verifies the deploys. It was distilled from the Abacus/Atria/Rampart/Cadre rollouts; the two repos' own `CLAUDE.md` files are canonical if anything here drifts.
+Two bots, both multi-tenant off one shared deployment each. Adding a vertical is **code on a branch → Slack app + env → MERGE → verify**, and the merge is load-bearing: until it lands, production has no such vertical and both bots answer 401 no matter what else is configured. This skill does the code, hands you ready-to-paste manifests, pauses on the human-only steps (Slack apps, Vercel/GitHub secrets), then has you merge and verifies the live builds. Distilled from the Abacus/Atria/Rampart/Cadre/Delphi/Capitol rollouts; the two repos' own `CLAUDE.md` files are canonical if anything here drifts.
+
+> **Ordering changed 2026-08-03, after Capitol.** The skill used to say `git push origin master` / `git push origin main` in the code steps, written when the workflow pushed straight to production. That was superseded on 2026-07-31 by the branch/preview/PR rule and the skill was never updated, so it went on telling you to create Slack apps and set env against a production build that could not possibly know about the new vertical. Capitol hit "the app did not respond" on BOTH bots for exactly this reason, ~15 minutes apart, and each was diagnosed from scratch. Env and Slack apps now go in FIRST (they are inert while the code is on a branch), then one merge per repo lands the code and bakes the env in a single deploy — which also removes the old "redeploy to bake the env" step entirely.
 
 - **Doctor bot** — repo `ryugo-eun/panacea-cli-slack`, local `~/Desktop/MERCOR/doctor-bot`, one shared Vercel deploy `panacea-cli-slack.vercel.app` (project `prj_MEVMVf5bbzvN5udKlHYxhpYS4KqC`, team `team_JkY6AoDXM6vNYKG0nX4zdWPM`). Push `origin master`.
 - **Upload bot** — repo `ryugo-eun/panacea-world-upload-bot`, local `~/Desktop/MERCOR/panacea-world-upload-bot`, shared Vercel receiver `panacea-world-upload-bot-zeta.vercel.app` + a GitHub Action worker. Push `origin main`.
@@ -37,8 +39,24 @@ Ask for, and confirm, all of these before touching code:
 | Slack workspace | Insurance grid workspace | where the two apps get created |
 | Doctor channel id | `C0BK9K03WAG` (if it exists yet) | `/doc channel set` later |
 | Upload channel id | `C0BJZLLSZ1R` (if it exists yet) | upload-bot `adminChannel` |
+| Vercel bypass secret | read from `VERCEL_PROTECTION_BYPASS` (below) | the doctor manifest's 3 Request URLs |
+
+**Look the channels up yourself before asking.** `slack_search_channels` with `query: "bot"` and the vertical's `workspace` finds both in one call, and on Capitol both already existed (created by IT Admin with the workspace), so asking would have wasted a round trip. Only ask if that search comes back empty.
 
 **Look up the channel ids before asking.** If the vertical's canvases were already built, `~/.claude/skills/editing-channel-canvases/reference/canvas-registry.md` carries a per-vertical channel-id table (including `#<vertical>-doctor-bot` and `#<vertical>-world-file-upload-bot`) — grep it first. It saved a round trip on Cadre.
+
+**Read the Vercel protection-bypass secret yourself; never ask the human to paste it.** The doctor bot's three Request URLs each carry `?x-vercel-protection-bypass=<secret>`, and this used to ship as a `YOUR_BYPASS_SECRET` placeholder the human hand-edited into three separate Slack fields per app. Instead:
+
+```bash
+set -a; . ~/Desktop/MERCOR/.env.local; set +a   # never echo the value
+[ -n "$VERCEL_PROTECTION_BYPASS" ] && echo "bypass: present (${#VERCEL_PROTECTION_BYPASS} chars)" || echo "bypass: MISSING"
+```
+
+Then write the real value straight into the manifest you save to `docs/` and paste in Step 4, so the human pastes a manifest that already works. **The value goes in the manifest file and the Slack field, never into your chat reply, a `git add`ed file, a Bash `command` string, or this skill.** The manifests live in `docs/` in a public-ish repo, so if the manifest is committed, keep the placeholder in the COMMITTED copy and fill the value only in the chat-pasted block.
+
+If `VERCEL_PROTECTION_BYPASS` is missing from the store, say so and ask the human to add that line themselves with a `!` shell command (so it never enters the transcript); do not ask them to paste it to you. Copy from Vercel → project `panacea-cli-slack` → Settings → Deployment Protection → Protection Bypass for Automation.
+
+**Do not propose turning Vercel Deployment Protection off** to avoid the bypass. It was investigated on 2026-08-03 and Ryu cannot change that setting: it is a permissions question, not a technical one. The evidence that it looks both possible and safe (a sibling project on the same team runs with SSO off; every `panacea-cli-slack` production endpoint authenticates itself) is exactly why this note exists — so it does not get re-derived and re-proposed every spinup.
 
 The shared Sparta Studio company `comp_2fa4115109d741cd94a3c409ed89e61f` + account `acct_be8f7fcc2c554b33baa5a0c9d05496e3` are the same for every vertical; only the campaign id differs. If channel ids don't exist yet, proceed - the upload bot can DM an admin id instead, and the doctor ops channel is set later with `/doc channel set`.
 
@@ -137,7 +155,7 @@ Fill in the vertical's real values and apply the naming conventions.
 
 **Upload bot (JSON)** — save as `panacea-world-upload-bot/docs/<key>-slack-manifest.json`. Fill `name` + `bot_user.display_name` = `<Vertical> World File Upload Bot`. Scopes `commands`, `chat:write`, `files:read`, `channels:history`, `groups:history`; bot events `message.channels` + `message.groups` (covers public OR private channel); slash `/worldfilesupload`; all three Request URLs = `https://panacea-world-upload-bot-zeta.vercel.app/api/slack/events`.
 
-**Doctor bot (YAML)** — save as `doctor-bot/docs/slack-app-manifest-<key>.yaml`. `display_information.name` = `Studio Doctor (<Vertical>)`; `bot_user.display_name` = `<vertical>-doctor`; slash `/doc`; scopes `commands`, `chat:write`, `chat:write.public`, `users:read`, `app_mentions:read`, `reactions:write`; event `app_mention`; all three Request URLs = `https://panacea-cli-slack.vercel.app/api/slack?x-vercel-protection-bypass=YOUR_BYPASS_SECRET`. Tell the human to replace `YOUR_BYPASS_SECRET` with the Vercel protection-bypass secret and to NOT append `&x-vercel-set-bypass-cookie=true`.
+**Doctor bot (YAML)** — save as `doctor-bot/docs/slack-app-manifest-<key>.yaml`. `display_information.name` = `Studio Doctor (<Vertical>)`; `bot_user.display_name` = `<vertical>-doctor`; slash `/doc`; scopes `commands`, `chat:write`, `chat:write.public`, `users:read`, `app_mentions:read`, `reactions:write`; event `app_mention`; all three Request URLs = `https://panacea-cli-slack.vercel.app/api/slack?x-vercel-protection-bypass=<the value you read from VERCEL_PROTECTION_BYPASS in Step 0>`. Fill the real value in so the human pastes a working manifest; do NOT emit a `YOUR_BYPASS_SECRET` placeholder for them to hand-edit into three separate Slack fields. Do NOT append `&x-vercel-set-bypass-cookie=true` (307 Slack won't follow).
 
 Copy the exact shapes from the two most recent per-vertical manifests in each repo's `docs/`.
 
@@ -159,9 +177,23 @@ Hand the human this checklist and WAIT for confirmation of each before proceedin
 
 > **Do not try to copy the token from Vercel for the GitHub secret.** `vercel env pull` returns BLANK for these encrypted vars, so you'd set an empty secret (this bit us on Rampart). The human copies the real token from the Slack app.
 
-## Step 6 — Redeploy + check the deploys
+## Step 6 — ⏸ MERGE the two PRs, then check the deploys
 
-**Doctor bot — REDEPLOY (this is the step people forget):** env set in Step 5 postdates the last build, and Vercel bakes env at build, so the live build has no `SLACK_SIGNING_SECRET_<KEY>` and `/doc` from the new app fails signature verify → "app did not respond". Confirm it: `vercel env ls production | grep <KEY>` timestamps vs `vercel ls panacea-cli-slack` top deploy age - if the deploy is OLDER than the env, redeploy. Trigger with an empty commit (`git commit --allow-empty -m "chore(<key>): redeploy to bake <KEY> Slack env"` → `git push origin master`) and poll `vercel ls` until the new production deploy is **Ready**. Then have the human retry `/doc` from `#<vertical>-doctor-bot`.
+**Nothing works until this step, and this is the step the skill used to be missing.** Both bots read their vertical from code (`APP_DEFS` + `CAMPAIGNS` in the doctor bot, `tenants()` + `CAMPAIGNS` in the upload bot). While that code is on a branch, PRODUCTION HAS NO SUCH VERTICAL, so the new Slack app's signature matches nothing and both bots answer **401**, which Slack renders as "**/doc failed because the app did not respond**" / "**worldfilesupload failed because the app did not respond**". No amount of env-setting or redeploying fixes it. Ask the human to merge (their call, per the review gate — do NOT merge unasked), then:
+
+- **Before merging the doctor-bot PR, check master has not moved** (`git log --oneline origin/master ^<branch>`). That repo's own CLAUDE.md carries a hard rule about stale bases: merge `origin/master` into the branch locally, re-run the full suite, and resolve there rather than at the merge button. On Capitol this picked up a PR that added a per-campaign sweep index; no textual overlap, but a new vertical plus a new per-task index is exactly the pair whose conflict would be semantic, not textual.
+- **Then confirm the live build is actually the merge**, rather than asking the human to test blind: `vercel inspect <newest-production-url>` and check its `created` timestamp postdates the merge AND that it carries the `panacea-cli-slack.vercel.app` alias the Slack Request URLs point at. Also re-grep production for the vertical: `git show origin/master:lib/slackApps.ts | grep -c 'key: "<key>"'` must be 1.
+- **No separate redeploy is needed** if Step 5 really ran first: the merge deploy postdates the env vars, so it bakes them. Verify rather than assume, with `vercel env ls production | grep <KEY>` timestamps against the deploy's age. If someone did set env AFTER the merge, then and only then force a rebuild with an empty commit on a branch + PR.
+
+**Reading the failure, if one of the bots still does not answer.** The status code separates the three causes and the logs are the only honest witness (`vercel logs <prod-url>`):
+
+| symptom | cause |
+| --- | --- |
+| **401**, request reached the function | signature matched no app/tenant. Either the code is not merged (grep production) or the signing secret is wrong/for the wrong app |
+| **302**, nothing logged at all | a Request URL lost its `?x-vercel-protection-bypass=` — and remember ALL THREE fields need it |
+| **no log line at all**, Slack says not-available-in-channel | Enterprise Grid channel restriction, not our code. See the gotcha below |
+
+The upload bot's rejection logs its reason explicitly (`"Rejected request: signature did not match any tenant"`, `reason: no_tenant_match`), which is the fastest confirmation that the merge is the missing piece.
 
 - Crons: you do NOT need the new app to run them - from any existing Studio Doctor app, `/doc cron dry-run <key>-advance` then `/doc cron enable <key>-advance` (switches are global by cron name). **One exact id per command, no wildcard** — `<key>-*` replies "Unknown cron". But `SLACK_BOT_TOKEN_<KEY>` IS required for the digest to post into the channel.
 - Ops channel is Redis, NOT an env var: in the workspace, run `/doc channel set` inside `#<vertical>-doctor-bot` (from the vertical's app so it scopes to `<key>`), and invite the bot. Only ACTIONS + the hourly digest post there; read-only diagnoses DM the invoker (by design).
@@ -174,7 +206,8 @@ Hand the human this checklist and WAIT for confirmation of each before proceedin
 - [ ] Upload app + bot user named `<Vertical> World File Upload Bot`
 - [ ] Doctor app `Studio Doctor (<Vertical>)`, bot user `<vertical>-doctor`
 - [ ] Both bots invited to `#<vertical>-doctor-bot` / `#<vertical>-world-file-upload-bot`
-- [ ] Doctor: production deploy Ready and POSTDATES the env timestamps; `/doc` responds
+- [ ] **BOTH PRs MERGED**, and production re-grepped to prove it: `git show origin/master:lib/slackApps.ts | grep -c 'key: "<key>"'` = 1 and `git show origin/main:api/slack/events.ts | grep -c 'campaign: "<key>"'` = 1. Unmerged code is the single most likely cause of either bot saying "the app did not respond"
+- [ ] Doctor: production deploy Ready, POSTDATES the env timestamps, and its `vercel inspect` shows it carries the `panacea-cli-slack.vercel.app` alias; `/doc` responds
 - [ ] Doctor: ops channel set (`/doc channel`), `SLACK_BOT_TOKEN_<KEY>` set, crons dry-run clean
 - [ ] Upload: a real `world_<id>.zip` uploads → replaces → syncs → channel notice; `RLS_API_KEY` scoped to the campaign
 - [ ] Upload: the golden-world guard proven for THIS vertical — its Golden World Building world is in `PROTECTED_WORLD_IDS` and comes back BLOCKED in the live sweep (Step 3.2). An unproven guard is how Abacus's live scaffold got full-replaced on 2026-07-30.
@@ -182,7 +215,7 @@ Hand the human this checklist and WAIT for confirmation of each before proceedin
 
 ## Gotchas (all seen for real)
 
-- **"app did not respond"** on `/doc` = env not baked (redeploy) OR the Request URL is missing `?x-vercel-protection-bypass=<secret>` / has the bad `&x-vercel-set-bypass-cookie=true` (307 Slack won't follow).
+- **"app did not respond"** on `/doc` or `/worldfilesupload`, in likelihood order for a NEW vertical: (1) **the PR is not merged**, so production has no such app/tenant and the signature matches nothing → **401**; (2) env not baked (a deploy older than the env vars) → also 401; (3) the Request URL is missing `?x-vercel-protection-bypass=<secret>` or has the bad `&x-vercel-set-bypass-cookie=true` → **302/307**, and nothing logged at all. **Read `vercel logs <prod-url>` before theorising**: 401 means it reached our code, 302 means it never did, and that one digit picks the cause. Both Capitol bots presented as this exact string on 2026-08-03 and both were cause (1).
 - **"This command is not available in this channel"** = Enterprise-Grid app-channel restriction, not our code, and **NOT fixed by `/invite`**. Grid tracks "the bot user is a member" and "the app is allowed in this channel" separately; only the second gates slash-command dispatch. So "the bot is already in the channel" is not evidence against this diagnosis (Cadre 2026-07-28). Fix via channel name → **Integrations → Apps → Add an App**; if the app is already listed there and it still blocks, it is an org-admin app policy on that channel and needs an IT request (`it-help` skill).
   - **Confirm it's Slack-side before touching anything:** `npx vercel logs <prod-deploy-url> --json` and look for a `POST /api/slack`. If no request arrived, Slack blocked it pre-dispatch and there is nothing to fix in the code or env. That same log tail also shows the new vertical's crons logging `cron.disabled — skipping`, which is free proof the cron wiring deployed correctly.
   - **Scope it in one step:** run the command in a DIFFERENT channel of the same workspace. Works elsewhere → channel-level restriction. Fails workspace-wide → the app isn't installed there, or another vertical's Studio Doctor app already owns `/doc` in that workspace (check the app name in the autocomplete dropdown; one `/doc` per workspace is the invariant).
