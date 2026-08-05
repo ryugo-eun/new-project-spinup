@@ -33,48 +33,37 @@ Do not proceed on a guessed prefix or workspace.
 
 Emit both tables with `<v>` replaced by the real prefix. Keep the visibility column; it is not decoration, it is what Cadre actually has.
 
-**EVERY channel is PUBLIC. Changed 2026-08-05, see the section below before you argue with it.**
-
 **Rename these three. They already exist, created by IT Admin at workspace creation.**
 
 | Ships as | Rename to | Visibility | Note |
 |---|---|---|---|
 | `general` | `<v>-announcements` | public | The all-members channel. **Plural.** Its default topic and purpose are already correct, so keep them. |
-| `random` | `<v>-epms` | public | **Replace the leftover topic and purpose** (see step 2b). They default to the water-cooler text and it is still on `#cadre-epms` today. |
-| `help-desk` | `<v>-technical-issues` | public | |
+| `random` | `<v>-epms` | private | **Replace the leftover topic and purpose** (see step 2b). They default to the water-cooler text and it is still on `#cadre-epms` today. |
+| `help-desk` | `<v>-technical-issues` | private | |
 
 **Create these six.**
 
 | Channel | Visibility | Note |
 |---|---|---|
-| `<v>-onboarding` | public | Both onboarding canvases live here; Cadre deliberately has no separate `-onboarding-support`. |
-| `<v>-pod-a` | public | One channel per pod. Add `-pod-b`, `-pod-c` as pods open. |
-| `<v>-reviewers` | public | Only if the vertical has reviewers. |
+| `<v>-onboarding` | private | Both onboarding canvases live here; Cadre deliberately has no separate `-onboarding-support`. |
+| `<v>-pod-a` | private | One channel per pod. Add `-pod-b`, `-pod-c` as pods open. |
+| `<v>-reviewers` | private | Only if the vertical has reviewers. |
 | `<v>-maven-support` | public | Named `-maven-support`, not `-robot-advice`. |
-| `<v>-doctor-bot` | public | Studio Doctor target; see `add-vertical-bots`. |
-| `<v>-world-file-upload-bot` | public | Upload bot target; see `add-vertical-bots`. |
+| `<v>-doctor-bot` | private | Studio Doctor target; see `add-vertical-bots`. |
+| `<v>-world-file-upload-bot` | private | Upload bot target; see `add-vertical-bots`. |
 
-### Why every channel is public (Ryu, 2026-08-05)
+### Visibility: the default above holds, and Westwood is an exception
 
-**The Teams integrations do not provision reliably into private channels**, so a private channel means
-the audience silently fails to add people and the writer never gets the channel. Ryu's call, made while
-standing Westwood up. Public is the default for every channel in the set from now on.
+**Westwood (2026-08-05) runs every channel public, on Ryu's call, because the Teams integrations did
+not provision reliably into its private channels.** That is a per-campaign decision, NOT a change to
+this spec. Ask before applying it to another vertical, and do not read Westwood as the new pattern.
 
-This is a change from the older verticals: **Cadre, Abacus, Atria and Rampart each run 7 of 9 private**
-(the Cadre table at the bottom of this file is the live record of that, not a spec to copy). Do not
-"restore" the private set on a new vertical to match them.
-
-Two things to keep in mind rather than let them surprise you:
-
-- **`<v>-epms` public means every expert in that workspace can read EPM discussion**, which is where
-  offboarding, pay and performance land. Each vertical has its own workspace, so the exposure is that
-  vertical's own experts and nobody else, but it IS exposure. If a vertical wants that conversation
-  private, the answer is a separate private channel that no audience targets, never flipping
-  `<v>-epms` back to private and re-breaking the provisioning.
-- **Public was a deliberate choice, not the only option.** A private channel can also be made to work
-  by inviting the app into it, which is the `channel_not_found` trap (`channel_not_found` on a private
-  channel means the bot is not in it, NOT that the id is wrong). That path was rejected as a per-channel
-  manual step that gets forgotten on every new vertical and fails silently when it is.
+For any vertical, if provisioning into a private channel fails: `channel_not_found` on a private
+channel means **the bot is not in it**, not that the id is wrong. Inviting the app is the normal fix.
+Going all-public is the other option and costs privacy on `<v>-epms`, which is where offboarding, pay
+and performance get discussed; each vertical has its own workspace, so the exposure is that vertical's
+own experts, but it is real. If a vertical wants that conversation private while staying all-public,
+use a separate private channel that no audience targets.
 
 Then **pause and wait** for the operator to say they are done. Do not run step 3 optimistically.
 
@@ -163,10 +152,7 @@ Channels alone are an empty room. Next:
 - `add-vertical-bots` for the two bot channels to point at something.
 - `provision-vertical-teams-integrations` to wire the tags, audiences and every Slack/Google/Insightful/Studio target onto these channels.
 
-## Cadre reference (live 2026-07-28) — HISTORICAL, predates the all-public change
-
-This is what Cadre actually has, recorded before the 2026-08-05 decision that every channel is public.
-Use it for the channel NAMES and the creator/date trick below. **Do not copy its visibility column.**
+## Cadre reference (live 2026-07-28)
 
 Workspace `Hr - sparta vertical`, url `ff0e0e6a7578518.slack.com`, enterprise grid `E09EQ48AGDV`. Exactly nine channels, no `#cadre-help-desk`.
 
