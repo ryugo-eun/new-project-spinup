@@ -92,6 +92,35 @@ changing it makes past and future runs incomparable. That is a deliberate trade,
 | hooks attached | **zero hooks means the task strands in "Running Task AutoQC" and never reaches the runner.** The most common dead smoke test. See `clone-studio-world` |
 | campaign has Sync to External Storage | the file sync cannot fire |
 
+## Preflight cannot see inside the Taiga environment, and that is a real blind spot
+
+**Every check above can pass while the environment is incapable of running anything.** There is no
+Taiga tool in the session, so nothing here reads the env's own config; preflight only confirms the id
+is set. Westwood, 2026-08-05: all six checks green, 52 files synced into the env's bucket with
+`prometheus_sync_status: complete`, and **three fires at 3:20, 3:42 and 3:46pm PT produced no job, no
+trajectory and no error on either side.** The env existed and was unconfigured. Configuring it to
+match Delphi's produced ten rollouts on the next fire.
+
+So when a fire produces literally nothing, stop debugging Studio and check the env in the Taiga UI
+against a vertical that runs (Delphi `908203df-f23e-4b12-8934-c91a53d3ca6e`):
+
+| Field | Value |
+|---|---|
+| Additional System Prompt | `### Important Notes:` / `- Output files MUST be saved in /tmp/outputs/` |
+| Output Directory | `/tmp/outputs` |
+| Upload Directory | `/tmp/world` |
+| Problem fields preset | `TGA-vert_healthcare_MER problem preset (job 43528da3)` (Org) |
+| Sampling Params Preset | `verticals_preset` (Global) |
+
+The preset is named `healthcare` and is shared by non-healthcare verticals; it is a field schema, not
+domain content. Match the reference vertical's preset, never infer from the name. `Output Directory`
+is also the reason a passing smoke test scores 0/1, see above.
+
+**The signature to recognise:** the runner remix returns fine, the task never leaves its first status,
+its `custom_fields` stay empty, and `trajectories` is empty for the whole world. An empty task
+`custom_fields` is the tell, because a runner that started stamps job fields there. Full runbook entry:
+`SPINUP-RUNBOOK.md` step 5a-i.
+
 Two things are deliberately reported rather than failed on:
 
 - **World-level verifiers.** `GET /verifiers/world/{id}` under-reports, documented in
