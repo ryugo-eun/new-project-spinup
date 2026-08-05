@@ -137,10 +137,29 @@ token is absent). Expect ~8 changes in the Automations sheet and ~14 in the EPM 
 `{{VERTICAL_LOWER}}`, so replacing the short token first turns `{{VERTICAL_LOWER}}` into
 `Rampart_LOWER}}`. A leftover `_LOWER}}` in a live doc is the tell that this ran in the wrong order.
 
-**4b. Recast the source vertical OUT of every copied Doc, then prove it.** Token replacement is not
-enough, because the template's EPM Training doc carries **Abacus's identity as literal text, not as
-a token** (see the table above). Skipping this ships a doc titled for the new vertical that sends
+**4b. Recast the source vertical OUT of every copied Doc AND SHEET, then prove it.** Token replacement
+is not enough, because the template's EPM Training doc carries **Abacus's identity as literal text, not
+as a token** (see the table above). Skipping this ships a doc titled for the new vertical that sends
 its EPMs to Abacus's channels, Abacus's docs and the wrong Insightful timer.
+
+**The `{{VERTICAL}} Automations` SHEET has the same defect and it is still in the template.** Found on
+Westwood 2026-08-05, after the EPM doc was tokenized in 2026-07-29 and this sheet was not. It is
+Atria-derived and carries Atria's identity as literal text in the `Logic / notes` and
+`Target (world / status)` columns:
+
+| What the template's sheet says | Why it is wrong |
+|---|---|
+| `Writer titles: TBD ({{VERTICAL}} admin-healthcare roles, e.g. medical coder / revenue-cycle specialist / health information manager)` | Token substitution makes this read `Westwood admin-healthcare roles`, i.e. the new vertical's name in front of **Atria's domain and Atria's job titles**. Replace the whole parenthetical with this vertical's real role titles from `get_project(include=['roles'])` |
+| `world_a50c1c4b8056465da650480e9fa7f7c3` (WB golden) | Atria's Golden World Building world. Repoint to THIS campaign's own |
+| `world_5d8d88cc842b4624bd0c1eebdda065d1` (TW) | Atria's tasking world. Repoint to THIS campaign's own |
+
+Status ids in that column (`98680cd3-…` World Created, `ba9f81f7-…` Ready for Delivery) are
+shared-canonical across verticals and are **correct as-is**; `ba9f81f7` was confirmed present in
+Westwood's own `status_config` 2026-08-05. Do not repoint those.
+
+Fix it with three `findReplace` requests on the copied sheet, and **do not silently accept a
+`{{VERTICAL}} admin-healthcare` string as a successful token substitution** — the token replaced
+correctly and the sentence is still wrong, which is the whole trap.
 
 Do it in two calls, in this order. The order matters:
 
@@ -262,6 +281,17 @@ the tokens in the wrong order. `{{INSTRUCTIONS_DOC_URL}}` surviving is CORRECT a
 Also confirm, by READING each copied Doc and Sheet: zero mentions of any other live vertical, zero
 mentions of the source domain, and zero occurrences of Abacus doc ids `1u-Go8Cr` / `1x6WJoAT`. Report
 the grep counts, not a summary judgement.
+
+Two additions from Westwood, 2026-08-05:
+
+- **Grep for the source domain's VOCABULARY, not just vertical names.** `admin-healthcare`,
+  `medical coder`, `accounting`, `insurance`, `KYC` and the like survive token substitution untouched
+  and read as if they belong to the new vertical. A clean vertical-name grep proves nothing on its own.
+- **Grep for any `world_[0-9a-f]{32}` and check every hit against THIS campaign's world ids**
+  (`GET /worlds/?campaign_id=…`). A hardcoded world id from the source vertical looks like
+  configuration rather than contamination, so nobody reads it as a defect. One legitimate `Panacea`
+  mention survives in the EPM Training doc ("modeled on Panacea with names removed") and is
+  template-intentional; report it, do not "fix" it.
 
 ## Notes
 
