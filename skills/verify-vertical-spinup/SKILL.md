@@ -172,20 +172,27 @@ Every one of these has actually happened and every one reads as "done" on a chec
 1. **Never use `preview_audience_members` to establish a population.** It undercounts: 12 vs a
    true 13 on Abacus, 1 vs 2 on Cadre. It drops people with no job on the project and missed a
    live EPM on an `extended` contract. Query `CONTRACTORTAGS` joined to `JOBS`.
-2. **Always pass `channel_types="public_channel,private_channel"`** to `slack_search_channels`.
-3. **Judge tag ownership by id against audience anchors, never by name.**
-4. **`list_tags` caps at 200 rows for Sparta**, so a new tag can be invisible through it. Use
+2. **An audience's `memberCount` is not evidence either, and a 0 is not a finding on its own.**
+   Westwood's Onboarding audience read 0 while 46 active people held its exact tag. Confirmed
+   2026-08-06 as a PLATFORM bug, not a misconfiguration; this audit reported it as a vertical-level
+   FAIL and was wrong to. Before writing up any zero: (a) `filter_project_team(tags_included=[<tag
+   name>])` for the real holder count, and (b) compare sibling audiences whose tags the same people
+   hold. If the siblings count fine, the wiring is not what differs, so it is not this vertical's
+   defect. Report it as a platform issue or leave it out.
+3. **Always pass `channel_types="public_channel,private_channel"`** to `slack_search_channels`.
+4. **Judge tag ownership by id against audience anchors, never by name.**
+5. **`list_tags` caps at 200 rows for Sparta**, so a new tag can be invisible through it. Use
    audience anchors or the Teams UI.
-5. **Read `state`, not existence**, for every automation, cron and bot switch.
-6. **`CREATEDAT` is `TIMESTAMP_TZ` in UTC.** Never classify recency with a date-string prefix.
+6. **Read `state`, not existence**, for every automation, cron and bot switch.
+7. **`CREATEDAT` is `TIMESTAMP_TZ` in UTC.** Never classify recency with a date-string prefix.
    Use `DATEDIFF(minute, CREATEDAT, CURRENT_TIMESTAMP())`.
-7. **Do not scan `notes` fields for foreign ids.** They legitimately name sources for provenance.
-8. **Read Drive shares with `drive.permissions.list` + `supportsAllDrives: true`.** The plain
+8. **Do not scan `notes` fields for foreign ids.** They legitimately name sources for provenance.
+9. **Read Drive shares with `drive.permissions.list` + `supportsAllDrives: true`.** The plain
    `get_file_permissions` tool HIDES group and inherited permissions and shows only you as
    owner, so a correctly shared folder reads as shared with nobody. Confirmed on all four new
    verticals 2026-07-29 (PT): Abacus `abacus-core-team-HKSh`, Atria `atria-core-team-l4Nq`,
    Cadre `cadre-core-team-Rr5G`, Rampart `rampart-core-team-zZi7`, each `writer` on the top folder.
-9. **An unreachable API is SKIPPED, never PASS.**
+10. **An unreachable API is SKIPPED, never PASS.**
 10. Report times in Pacific, labelled.
 
 ## Scope note

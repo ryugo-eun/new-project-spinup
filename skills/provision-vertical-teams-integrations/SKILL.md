@@ -56,25 +56,17 @@ back the EXISTING shared company tag with `created:false`, which is exactly the
 cross-vertical bug above. Prefixed names are what make it create fresh ones.
 
 **`project_id` only scopes tags the call actually CREATES.** The idempotency key is
-`(company_id, name)`, NOT `(company_id, project_id, name)`. So if the name already
-exists company-wide, the call returns that existing tag with `created:false` and
-does not scope it, even though you passed `project_id`. Re-running the step does not
-retro-scope it.
+`(company_id, name)`, NOT `(company_id, project_id, name)`, so a name that already
+exists comes back with `created:false` and is not scoped, whatever you passed. Read
+the response rather than checking for a 200: on a new vertical expect
+`createdCount == len(names)` and `existingCount == 0`.
 
-**What a company-scoped tag actually breaks is UNKNOWN, and do not repeat the
-guess.** The `create_tag` tool description claims a company-wide tag "will NOT show
-in a project's Team Management grid until it is scoped to that project". On Westwood
-2026-08-06 that prediction was **wrong**: Ryu confirmed the tags do appear in the
-picker. So either Westwood's tags are in fact project-scoped, or the documented
-symptom is not real. Unresolved. Until someone establishes the true difference:
-
-- Do not diagnose any problem as "the tag is company-scoped" without a symptom you
-  have actually observed.
-- Do not assert the Team Management grid as the tell.
-
-Still worth doing, because it is free and correct:
-
-**read the response, do not just check for a 200.**
+**Do NOT go hunting for company-vs-project scope as the cause of a problem.**
+Chased on Westwood 2026-08-06 and it was a dead end: the tags were project-scoped
+all along and the symptom turned out to be a platform bug. Scope is also not
+readable from any API (`list_tags` returns only `tagId, name, color, companyId,
+companyName`) and there is no update-tag tool to change it, so it is an expensive
+thing to speculate about and a cheap thing to get wrong.
 
 ```
 resp = create_tags(project_id=TARGET, company_id=..., names=[...])
@@ -272,15 +264,16 @@ verticals were confirmed shared 2026-07-29 (PT).
 ## Gotchas
 
 - **Bare tag names return shared company-wide tags.** Always prefix.
-- **`project_id` scopes only tags the call CREATES.** A `created:false` row is a
-  pre-existing tag and stays as it was, whatever you passed. Check
-  `createdCount`/`existingCount` on the response. **No API returns a team tag's
-  project scope** — `list_tags` gives `tagId, name, color, companyId, companyName`
-  and nothing else — so you cannot confirm scope programmatically, and there is no
-  update-tag tool to change it (`set_project_portfolio_tag` is portfolio-type only).
-  **What breaks when a tag is company-scoped is not established**; the tool doc says
-  it vanishes from the Team Management grid, and that was directly contradicted on
-  Westwood 2026-08-06. Do not diagnose from scope alone.
+- **`project_id` scopes only tags the call CREATES.** A `created:false` row is
+  pre-existing and stays as it was. Check `createdCount`/`existingCount`.
+- **An audience can report 0 members while its tag demonstrably has holders, and
+  that can be the PLATFORM, not your wiring.** Westwood 2026-08-06: the Onboarding
+  audience read 0 while `filter_project_team` returned 46 active people holding that
+  exact tag, all of whom also held World Builder and Active Writer, whose audiences
+  counted fine. Confirmed as a platform bug. **The cheap disproof of a config cause
+  is the sibling comparison**: if two audiences anchored on tags the same people
+  hold disagree, the wiring is not what differs. Do that before investigating scope,
+  anchors or targets, and do not trust `memberCount` as evidence of anything.
 - **Never reuse another vertical's `completed_work_trial` tag.** Each vertical gets
   its own `<v>_completed_work_trial`. Sharing it merges the two verticals' rosters.
 - **`list_tags` caps at 200 rows for Sparta**; read tag ids from
