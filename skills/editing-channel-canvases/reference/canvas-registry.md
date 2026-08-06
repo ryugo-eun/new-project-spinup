@@ -162,6 +162,74 @@ Still `(link TBD)` on Capitol: the **Instructions doc** (biggest unblock: 7 canv
 names**. Bot-channel canvases (#capitol-doctor-bot, #capitol-world-file-upload-bot) NOT created:
 clone Panacea /doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Capitol.
 
+## Westwood canvases (Corporate Finance vertical; workspace `Westwood`, created 2026-08-05)
+
+Cloned from the **Capitol** set (the newest and only complete 15), not Abacus. Capitol→Westwood, domain
+government & public policy→**corporate finance**. Westwood's six live Writer `role_title` values per
+`get_project` are FP&A, Tax, Treasury, Corporate Development, Investor Relations and Strategic Finance,
+so the "What is Westwood?" framing names those rather than a single domain label. SVA dashboard →
+`camp_16430a7441374a3ca5195681058e2543`. Insightful timers set to **`westwood-world-building`** and
+**`westwood-task-writing`**, which are the LIVE Insightful project names read off `list_project_audiences`,
+not the generic "Sparta - <V> - World" convention that Cadre and Capitol guessed at. All 15 are STANDALONE
+(owned by Ryu); each must be shared into its channel by hand.
+
+**Westwood channel names were SWAPPED mid-creation (2026-08-05, ~6:05pm PT).** Ryu renamed the onboarding
+and announcements channels, exchanging their names. Post-swap, verified live:
+`C0BMELJCKJQ` = **#westwood-announcements** (PUBLIC, all-members) and `C0BMEM6EL0L` =
+**#westwood-onboarding** (private). Both ids had the opposite name earlier the same day, so any note or
+handoff written before ~6pm PT on 2026-08-05 has them backwards. Resolve by id, and re-resolve rather
+than trusting a cached table.
+
+Westwood channel IDs (workspace URL `c97d3c5e1570fdf.slack.com`; 8 of 9 PRIVATE, resolved via
+`slack_search_channels` query "westwood" with `channel_types=public_channel,private_channel` AFTER the
+swap): #westwood-announcements `C0BMELJCKJQ` (public), #westwood-onboarding `C0BMEM6EL0L`,
+#westwood-maven-support `C0BM7LBE677`, #westwood-epm `C0BP60F8ZFA`, #westwood-pod-a `C0BP60FLG8Y`,
+#westwood-reviewers `C0BP60HKPUY`, #westwood-technical-issues `C0BNBKK35R8`,
+#westwood-doctor-bot `C0BNFAU0SAY`, #westwood-world-file-upload-bot `C0BN877PPEZ`.
+
+**Westwood channel-set differences:** NO `#westwood-general` and NO `#westwood-onboarding-support`, so
+both onboarding canvases live in `#westwood-onboarding` and "Welcome to Westwood" goes in
+`#westwood-announcements` (Cadre pattern). The EPM channel is SINGULAR `#westwood-epm` where every other
+vertical is `-epms`. `#westwood-maven-support` (`C0BM7LBE677`) is the ORIGINAL IT-Admin technical-issues
+channel renamed; Ryu was shown this and said leave it.
+
+| Target channel | Canvas | Canvas ID |
+|---|---|---|
+| #westwood-epm | 📌 Westwood EPM Start Here | F0BN602PXEX |
+| #westwood-epm | Westwood EPM Roster | F0BNE57HFRP |
+| #westwood-epm | 🔗 Westwood Key Links | F0BNFTRGSCC |
+| #westwood-epm | Westwood Reimbursements and Bonus Forms | F0BMWSE939D |
+| #westwood-epm | Westwood Weekly Availability | F0BNE5V8KPB (epm channel ONLY, per Ryu 2026-07-29) |
+| #westwood-pod-a | 🚀 Westwood Pod A: Start Here | F0BNC7QT1BL |
+| #westwood-pod-a | 🚀 Westwood Information Station | F0BN8QQJDPF |
+| #westwood-onboarding | ✅ Welcome to the Westwood Onboarding Channel! | F0BNC7XPL82 |
+| #westwood-onboarding | 🛟 Westwood Onboarding Support: Read Before Posting | F0BP6JHFLQ0 |
+| #westwood-reviewers | 🔍 Welcome, Westwood Reviewers! | F0BMWSZ071V |
+| #westwood-reviewers | Westwood Reviewer Roster | F0BNC87356W |
+| #westwood-announcements | 📣 Westwood Announcements: Start Here | F0BN61J6DGB |
+| #westwood-announcements | 🧭 Welcome to Westwood | F0BN8RAPVGV |
+| #westwood-maven-support | 🤖 Westwood Maven Support: How to Use This Channel | F0BN8RDPK53 |
+| #westwood-technical-issues | 🛠️ Westwood Technical Issues: How to Get Help | F0BMWTC1G07 |
+
+**Westwood is the second vertical (after Capitol) whose CALENDARS existed before the canvases**, so both
+went in live rather than as TBDs. Onboarding calendar cid
+`Y183MjE0MTczN2FhMDE1NzI5NjQ3MjA5ZjEyOGIxMmI1NDAyM2Q2ZjdlNDg4ODZhNDQyYjgyOTk2OThmZTMyNGE5QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20`
+(id `c_72141737aa015729647209f128b12b54023d6f7e48886a442b8299698fe324a9`); writer calendar cid
+`Y18zZmVmZGEyOWM4ZWI3MDFjMWJlYWU2NDM3MGY0YzhlNWU3YjhiM2U5ZjFmZWYzNDZkZDliYjg4ZDNhNzQ3NTMwQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20`
+(id `c_3fefda29c8eb701c1beae64370f4c8e5e7b8b3e9f1fef346dd9bb88d3a747530`). Both base64-decoded AND matched
+against live `list_calendars` before writing. **Caveat: both calendars are EMPTY** (no sessions seeded), so
+the links resolve to a blank calendar until someone schedules. Filled into 6 canvases: onboarding welcome,
+onboarding support, Welcome to Westwood (all three carry BOTH), Pod A + Information Station (writer only),
+and Key Links (both). Drive folders also live: top `103dQQjsSFd6RmZUaCLkn3rvr_7fXEo39`, Expert Facing
+`15RLM3zBIDbXFdhU9nP0IVb-tfsI0w6pw`.
+
+Still `(link TBD)` on Westwood: the **Instructions doc** (biggest unblock: 7 canvases), **bonus +
+reimbursement forms** (5 canvases), **EPM Training doc**, **Automations sheet**, **Expert Tracker**,
+**SSOT / Daily Syncs**, **Reviewer Guide**, **Review Tracker**, **Tasking Quick Guide** + the 5 task
+walkthrough videos, **Reviewer Feedback Form**, **office-hours times**, **pod-lead and roster names**.
+Bot-channel canvases (#westwood-doctor-bot, #westwood-world-file-upload-bot) NOT created: clone Panacea
+/doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Westwood.
+
 ## Fixed assets and constraints
 
 - Org chart image: Slack file `F0BHESJ76C9`, hosted via a message in #abacus-pod-a. Embedded by the Information Station canvas. Do not delete the hosting message.
