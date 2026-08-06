@@ -55,6 +55,37 @@ create_tags(project_id=TARGET, company_id="company_AAABlLQjCsYYoXP4rsZKpY0y",
 back the EXISTING shared company tag with `created:false`, which is exactly the
 cross-vertical bug above. Prefixed names are what make it create fresh ones.
 
+**`project_id` only scopes tags the call actually CREATES, and this is the trap
+(found on Westwood 2026-08-06).** The idempotency key is `(company_id, name)`, NOT
+`(company_id, project_id, name)`. So if the name already exists company-wide, the
+call returns that existing tag with `created:false` and **silently leaves it
+unscoped**, even though you passed `project_id`. Any tag that was ever created once
+without `project_id` can never be fixed by re-running this step.
+
+**A company-wide tag is not visibly broken, which is why this survived six
+spinups.** It still anchors audiences, still grants Slack, Google, Studio and
+Insightful, and still reports the right `memberCount`. The only symptom is that it
+does NOT appear in the project's Team Management tag picker or grid, so an EPM
+cannot tag or untag anyone by hand and the grid looks empty of the vertical's own
+tags. Every automated check passes.
+
+So: **read the response, do not just check for a 200.**
+
+```
+resp = create_tags(project_id=TARGET, company_id=..., names=[...])
+# expect createdCount == len(names) and existingCount == 0 on a NEW vertical.
+# any row with created:false is an UNSCOPED pre-existing tag → flag it, do not move on.
+```
+
+If a row comes back `created:false` on a vertical that should have none of these
+tags yet, stop and work out where that name came from before wiring audiences to it.
+
+**There is no known API to retro-scope an existing team tag to a project.** Checked
+2026-08-06: `set_project_portfolio_tag` is portfolio-type only, and no update-tag
+tool exists. Deleting and recreating is NOT a safe fix, because audiences and
+automations reference the tag by id. Treat the remediation as UI-only and
+unverified until someone confirms a route.
+
 Note the casing split that Cadre actually uses: the work-trial tag is snake_case
 and lowercase (`cadre_completed_work_trial`) while the rest are Title Case with a
 capitalized vertical prefix. Match it; the automations reference these by id, but
@@ -187,6 +218,12 @@ it at all, which is why it gets missed. Verify by re-reading. Reversible with
 
 ## Step 5: verify
 
+0. **Open the project's Team Management grid in the Teams UI and confirm the nine
+   tags are in the tag picker.** This is a manual step on purpose: no API returns a
+   team tag's project scope, so a company-scoped tag passes every other check here.
+   If they are missing, they were created (or idempotently returned) without
+   `project_id` — see step 1. Do this FIRST, because everything below can pass while
+   the grid is empty.
 1. `list_project_audiences(project_id, company_id)` and diff against the matrix.
    Report any audience with **zero** targets; that is a tag that grants nothing.
 2. **Resolve every slack target by its `externalId` channel id, never by its `name`.**
@@ -231,6 +268,15 @@ verticals were confirmed shared 2026-07-29 (PT).
 ## Gotchas
 
 - **Bare tag names return shared company-wide tags.** Always prefix.
+- **A tag can be prefixed, correct, wired, working, and still company-scoped.**
+  `project_id` scopes only tags the call CREATES; a `created:false` row stays
+  company-wide no matter what you passed. The tag works everywhere except the
+  project's Team Management grid, so no audience check, member count or audit
+  catches it. Check `createdCount`/`existingCount` on the response, and confirm the
+  tags appear in the Teams UI grid, because **no API returns a team tag's project
+  scope** — `list_tags` gives `tagId, name, color, companyId, companyName` and
+  nothing else. Found on Westwood 2026-08-06, after the vertical had passed a full
+  spinup audit.
 - **Never reuse another vertical's `completed_work_trial` tag.** Each vertical gets
   its own `<v>_completed_work_trial`. Sharing it merges the two verticals' rosters.
 - **`list_tags` caps at 200 rows for Sparta**; read tag ids from
