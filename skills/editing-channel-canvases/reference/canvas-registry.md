@@ -266,25 +266,40 @@ verified. **CAVEAT: both are EMPTY, no sessions seeded**, so the links resolve t
 
 | Target channel | Canvas | Canvas ID | Westwood source |
 |---|---|---|---|
-| #lyceum-onboarding | ✅ Welcome to the Lyceum Onboarding Channel! | **F0BP773H908** ✅ done | F0BNC7XPL82 |
-| #lyceum-onboarding | 🛟 Lyceum Onboarding Support: Read Before Posting | TODO | F0BP6JHFLQ0 |
-| #lyceum-announcements | 🧭 Welcome to Lyceum | TODO | F0BN8RAPVGV |
-| #lyceum-announcements | 📣 Lyceum Announcements: Start Here | TODO | F0BN61J6DGB |
-| #lyceum-pod-a | 🚀 Lyceum Pod A: Start Here | TODO | F0BNC7QT1BL |
-| #lyceum-pod-a | 🚀 Lyceum Information Station | TODO | F0BN8QQJDPF |
-| #lyceum-reviewers | 🔍 Welcome, Lyceum Reviewers! | TODO | F0BMWSZ071V |
-| #lyceum-reviewers | Lyceum Reviewer Roster | TODO | F0BNC87356W |
-| #lyceum-epms | 📌 Lyceum EPM Start Here | TODO | F0BN602PXEX |
-| #lyceum-epms | 🔗 Lyceum Key Links | TODO | F0BNFTRGSCC |
-| #lyceum-epms | Lyceum EPM Roster | TODO | F0BNE57HFRP |
-| #lyceum-epms | Lyceum Reimbursements and Bonus Forms | TODO | F0BMWSE939D |
-| #lyceum-epms | Lyceum Weekly Availability | TODO | F0BNE5V8KPB (epms ONLY) |
-| #lyceum-maven-support | 🤖 Lyceum Maven Support: How to Use This Channel | TODO | F0BN8RDPK53 |
-| #lyceum-technical-issues | 🛠️ Lyceum Technical Issues: How to Get Help | TODO | F0BMWTC1G07 |
+| #lyceum-onboarding | ✅ Welcome to the Lyceum Onboarding Channel! | F0BP773H908 | F0BNC7XPL82 |
+| #lyceum-onboarding | 🛟 Lyceum Onboarding Support: Read Before Posting | F0BN6L09D7D | F0BP6JHFLQ0 |
+| #lyceum-announcements | 🧭 Welcome to Lyceum | F0BNATRPW8N | F0BN8RAPVGV |
+| #lyceum-announcements | 📣 Lyceum Announcements: Start Here | F0BNCSWUKU2 | F0BN61J6DGB |
+| #lyceum-pod-a | 🚀 Lyceum Pod A: Start Here | F0BN6L7UZ0T | F0BNC7QT1BL |
+| #lyceum-pod-a | 🚀 Lyceum Information Station | F0BMXGF16NB | F0BN8QQJDPF |
+| #lyceum-reviewers | 🔍 Welcome, Lyceum Reviewers! | F0BNERDRLNM | F0BMWSZ071V |
+| #lyceum-reviewers | Lyceum Reviewer Roster | F0BMXGJ5QUX | F0BNC87356W |
+| #lyceum-epms | 📌 Lyceum EPM Start Here | F0BNGJKJCPN | F0BN602PXEX |
+| #lyceum-epms | 🔗 Lyceum Key Links | F0BNAUFKUMU | F0BNFTRGSCC |
+| #lyceum-epms | Lyceum EPM Roster | F0BP78L7LRE | F0BNE57HFRP |
+| #lyceum-epms | Lyceum Reimbursements and Bonus Forms | F0BNERZUC1X | F0BMWSE939D |
+| #lyceum-epms | Lyceum Weekly Availability | F0BN6LZLW1Z | F0BNE5V8KPB (epms ONLY) |
+| #lyceum-maven-support | 🤖 Lyceum Maven Support: How to Use This Channel | F0BN9F95RGV | F0BN8RDPK53 |
+| #lyceum-technical-issues | 🛠️ Lyceum Technical Issues: How to Get Help | F0BNES49T4H | F0BMWTC1G07 |
 
-Will stay `(link TBD)` on Lyceum: **Instructions doc** (biggest unblock, 7 canvases), **bonus +
-reimbursement forms**, **EPM Training doc** `1n7IFkRcMDYbKFvMFG7FWxuIAngikquYiRZZR_JcindU`,
-**Automations sheet** `1-DrzXcpYs6WNLB1f4rDdmKNgXn2mRcYfn0qaDJ_uiKg`, **Expert Tracker**,
+**Canvases 2-15 created 2026-08-05 ~8:45-9:05pm PT**, each read back afterwards. Every channel id was
+re-resolved live against `slack_search_channels` after writing (all 9 matched this section's table), both
+calendar cids were base64-decoded and matched their `c_…` ids, and the campaign id was confirmed by a
+read-only Studio `GET /campaigns/camp_c59448e1…` returning `campaign_name` = `Lyceum`.
+
+**Two links that Westwood leaves TBD are FILLED on Lyceum**, because both files already exist in Lyceum's
+Drive tree and were confirmed live via Drive `get_file_metadata`: **EPM Training doc**
+`1n7IFkRcMDYbKFvMFG7FWxuIAngikquYiRZZR_JcindU` ("Lyceum EPM Training", in EPM Start Here + Key Links) and
+**Automations sheet** `1-DrzXcpYs6WNLB1f4rDdmKNgXn2mRcYfn0qaDJ_uiKg` ("Lyceum Automations", in Key Links).
+Both are `_CLONEME`-template clones, so their CONTENT is still generic/unreviewed even though the links work.
+
+**Typo caught and fixed:** the Key Links Writer Calendar href first landed as `…Z29vZ2xlLmRvbQ`
+(`google.dom`), a silent dead link; fixed by a section-targeted `slack_update_canvas` and re-read. This is
+the third time a hand-retyped calendar URL has broken (Atria 2026-07-23, here twice-over), so copy the cid
+and the `.com` tail as one unit.
+
+Still `(link TBD)` on Lyceum after the build: **Instructions doc** (biggest unblock, 7 canvases), **bonus +
+reimbursement forms** (5 canvases), **Expert Tracker**,
 **SSOT / Daily Syncs**, **Reviewer Guide**, **Tasking Quick Guide** + walkthrough videos,
 **Reviewer Feedback Form**, **office-hours times**, **pod-lead and roster names**. Drive top folder
 `1O3L1RdNdIqqZsbz40YP4-F4GWMXGIXCz`, Expert Facing `1CAmF3qH_tztHo6MfaUGlHAySvFT3OO80` — both live,
