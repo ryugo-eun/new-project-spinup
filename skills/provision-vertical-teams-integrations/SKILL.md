@@ -55,21 +55,26 @@ create_tags(project_id=TARGET, company_id="company_AAABlLQjCsYYoXP4rsZKpY0y",
 back the EXISTING shared company tag with `created:false`, which is exactly the
 cross-vertical bug above. Prefixed names are what make it create fresh ones.
 
-**`project_id` only scopes tags the call actually CREATES, and this is the trap
-(found on Westwood 2026-08-06).** The idempotency key is `(company_id, name)`, NOT
-`(company_id, project_id, name)`. So if the name already exists company-wide, the
-call returns that existing tag with `created:false` and **silently leaves it
-unscoped**, even though you passed `project_id`. Any tag that was ever created once
-without `project_id` can never be fixed by re-running this step.
+**`project_id` only scopes tags the call actually CREATES.** The idempotency key is
+`(company_id, name)`, NOT `(company_id, project_id, name)`. So if the name already
+exists company-wide, the call returns that existing tag with `created:false` and
+does not scope it, even though you passed `project_id`. Re-running the step does not
+retro-scope it.
 
-**A company-wide tag is not visibly broken, which is why this survived six
-spinups.** It still anchors audiences, still grants Slack, Google, Studio and
-Insightful, and still reports the right `memberCount`. The only symptom is that it
-does NOT appear in the project's Team Management tag picker or grid, so an EPM
-cannot tag or untag anyone by hand and the grid looks empty of the vertical's own
-tags. Every automated check passes.
+**What a company-scoped tag actually breaks is UNKNOWN, and do not repeat the
+guess.** The `create_tag` tool description claims a company-wide tag "will NOT show
+in a project's Team Management grid until it is scoped to that project". On Westwood
+2026-08-06 that prediction was **wrong**: Ryu confirmed the tags do appear in the
+picker. So either Westwood's tags are in fact project-scoped, or the documented
+symptom is not real. Unresolved. Until someone establishes the true difference:
 
-So: **read the response, do not just check for a 200.**
+- Do not diagnose any problem as "the tag is company-scoped" without a symptom you
+  have actually observed.
+- Do not assert the Team Management grid as the tell.
+
+Still worth doing, because it is free and correct:
+
+**read the response, do not just check for a 200.**
 
 ```
 resp = create_tags(project_id=TARGET, company_id=..., names=[...])
@@ -218,12 +223,11 @@ it at all, which is why it gets missed. Verify by re-reading. Reversible with
 
 ## Step 5: verify
 
-0. **Open the project's Team Management grid in the Teams UI and confirm the nine
-   tags are in the tag picker.** This is a manual step on purpose: no API returns a
-   team tag's project scope, so a company-scoped tag passes every other check here.
-   If they are missing, they were created (or idempotently returned) without
-   `project_id` — see step 1. Do this FIRST, because everything below can pass while
-   the grid is empty.
+0. **Open the project's Team Management grid and confirm the nine tags are in the
+   tag picker.** Cheap, and it is the only human-visible check on the tags. Note it
+   is NOT a scope test: Westwood's tags appear in the picker, so a tag showing here
+   tells you nothing about whether it is project- or company-scoped. Scope is not
+   readable from any API. See step 1.
 1. `list_project_audiences(project_id, company_id)` and diff against the matrix.
    Report any audience with **zero** targets; that is a tag that grants nothing.
 2. **Resolve every slack target by its `externalId` channel id, never by its `name`.**
@@ -268,15 +272,15 @@ verticals were confirmed shared 2026-07-29 (PT).
 ## Gotchas
 
 - **Bare tag names return shared company-wide tags.** Always prefix.
-- **A tag can be prefixed, correct, wired, working, and still company-scoped.**
-  `project_id` scopes only tags the call CREATES; a `created:false` row stays
-  company-wide no matter what you passed. The tag works everywhere except the
-  project's Team Management grid, so no audience check, member count or audit
-  catches it. Check `createdCount`/`existingCount` on the response, and confirm the
-  tags appear in the Teams UI grid, because **no API returns a team tag's project
-  scope** — `list_tags` gives `tagId, name, color, companyId, companyName` and
-  nothing else. Found on Westwood 2026-08-06, after the vertical had passed a full
-  spinup audit.
+- **`project_id` scopes only tags the call CREATES.** A `created:false` row is a
+  pre-existing tag and stays as it was, whatever you passed. Check
+  `createdCount`/`existingCount` on the response. **No API returns a team tag's
+  project scope** — `list_tags` gives `tagId, name, color, companyId, companyName`
+  and nothing else — so you cannot confirm scope programmatically, and there is no
+  update-tag tool to change it (`set_project_portfolio_tag` is portfolio-type only).
+  **What breaks when a tag is company-scoped is not established**; the tool doc says
+  it vanishes from the Team Management grid, and that was directly contradicted on
+  Westwood 2026-08-06. Do not diagnose from scope alone.
 - **Never reuse another vertical's `completed_work_trial` tag.** Each vertical gets
   its own `<v>_completed_work_trial`. Sharing it merges the two verticals' rosters.
 - **`list_tags` caps at 200 rows for Sparta**; read tag ids from
