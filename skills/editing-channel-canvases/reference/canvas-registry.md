@@ -230,6 +230,67 @@ walkthrough videos, **Reviewer Feedback Form**, **office-hours times**, **pod-le
 Bot-channel canvases (#westwood-doctor-bot, #westwood-world-file-upload-bot) NOT created: clone Panacea
 /doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Westwood.
 
+## Lyceum canvases (Education vertical; workspace `Lyceum`, started 2026-08-05) — IN PROGRESS, 1 of 15
+
+Cloned from the **Westwood** set (newest complete 15, and the identical channel shape). Westwood→Lyceum,
+domain corporate finance→**education**. **Lyceum has NO roles defined yet** (Ryu deferred the roles/rates
+decision 2026-08-05), so there is no writer `role_title` to derive a domain label from and the
+"What is Lyceum?" framing is a general education framing — **have Ryu eyeball it once roles exist.**
+SVA dashboard → `camp_c59448e182154793b37da8edbde6783c`. Insightful timers → the LIVE project names
+**`lyceum-world-building`** and **`lyceum-task-writing`** (from `list_project_audiences`), not the
+generic convention.
+
+Lyceum channel IDs (workspace URL `954e60b020122ab.slack.com`, enterprise `E09EQ48AGDV`; resolved via
+`slack_search_channels` query "lyceum" with `channel_types=public_channel,private_channel` at
+2026-08-05 7:36pm PT): #lyceum-announcements `C0BN8L64PC6` (public), #lyceum-technical-issues
+`C0BNG52Q868` (private), #lyceum-onboarding `C0BNAM6M7MG` (private), #lyceum-epms `C0BNCHHL4F3`
+(public), #lyceum-pod-a `C0BNE6FHPJM` (public), #lyceum-reviewers `C0BNFUUBARJ` (public),
+#lyceum-maven-support `C0BN4EFAWR1` (private), #lyceum-doctor-bot `C0BN8R5BKRB` (public),
+#lyceum-world-file-upload-bot `C0BP6JQD7ME` (public).
+
+**The Lyceum workspace was INVISIBLE to `slack_search_channels` until 2026-08-05 ~7:36pm PT.** The
+workspace list the error message returns is cached server-side; a fresh grant took ~45 minutes to
+appear. If a vertical's workspace is missing, that is the likely cause, not a missing grant.
+
+**Lyceum channel-set differences:** NO `#lyceum-general` and NO `#lyceum-onboarding-support`, so both
+onboarding canvases go in `#lyceum-onboarding` and "Welcome to Lyceum" goes in `#lyceum-announcements`
+(Cadre/Westwood pattern). Maven channel is `#lyceum-maven-support`. Announcements is PLURAL here,
+unlike Cadre/Capitol.
+
+**Calendars existed before the canvases** (created 2026-08-05 8:05pm PT), so both go in live.
+Onboarding cid `Y180NmZjMTIwMTI4NWRkMTk2YTE1ODhhN2VkNzc1NzgyY2FlZWYyNDk3OTU5YzdlZDE2NTdhODg5NzExZjI3YjcwQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20`
+(id `c_46fc1201285dd196a1588a7ed775782caeef2497959c7ed1657a889711f27b70`); Writer cid
+`Y18xYWNmMmUzOTZiNTU4MWZmYTVmMGE4OGU0M2U0M2JhMjk4MDIxOWNmNzk1MWM5MjA4MzM4ZDk5YWUzODZhZjMxQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20`
+(id `c_1acf2e396b5581ffa5f0a88e43e43ba2980219cf7951c9208338d99ae386af31`). Both base64 round-trip
+verified. **CAVEAT: both are EMPTY, no sessions seeded**, so the links resolve to a blank calendar.
+
+| Target channel | Canvas | Canvas ID | Westwood source |
+|---|---|---|---|
+| #lyceum-onboarding | ✅ Welcome to the Lyceum Onboarding Channel! | **F0BP773H908** ✅ done | F0BNC7XPL82 |
+| #lyceum-onboarding | 🛟 Lyceum Onboarding Support: Read Before Posting | TODO | F0BP6JHFLQ0 |
+| #lyceum-announcements | 🧭 Welcome to Lyceum | TODO | F0BN8RAPVGV |
+| #lyceum-announcements | 📣 Lyceum Announcements: Start Here | TODO | F0BN61J6DGB |
+| #lyceum-pod-a | 🚀 Lyceum Pod A: Start Here | TODO | F0BNC7QT1BL |
+| #lyceum-pod-a | 🚀 Lyceum Information Station | TODO | F0BN8QQJDPF |
+| #lyceum-reviewers | 🔍 Welcome, Lyceum Reviewers! | TODO | F0BMWSZ071V |
+| #lyceum-reviewers | Lyceum Reviewer Roster | TODO | F0BNC87356W |
+| #lyceum-epms | 📌 Lyceum EPM Start Here | TODO | F0BN602PXEX |
+| #lyceum-epms | 🔗 Lyceum Key Links | TODO | F0BNFTRGSCC |
+| #lyceum-epms | Lyceum EPM Roster | TODO | F0BNE57HFRP |
+| #lyceum-epms | Lyceum Reimbursements and Bonus Forms | TODO | F0BMWSE939D |
+| #lyceum-epms | Lyceum Weekly Availability | TODO | F0BNE5V8KPB (epms ONLY) |
+| #lyceum-maven-support | 🤖 Lyceum Maven Support: How to Use This Channel | TODO | F0BN8RDPK53 |
+| #lyceum-technical-issues | 🛠️ Lyceum Technical Issues: How to Get Help | TODO | F0BMWTC1G07 |
+
+Will stay `(link TBD)` on Lyceum: **Instructions doc** (biggest unblock, 7 canvases), **bonus +
+reimbursement forms**, **EPM Training doc** `1n7IFkRcMDYbKFvMFG7FWxuIAngikquYiRZZR_JcindU`,
+**Automations sheet** `1-DrzXcpYs6WNLB1f4rDdmKNgXn2mRcYfn0qaDJ_uiKg`, **Expert Tracker**,
+**SSOT / Daily Syncs**, **Reviewer Guide**, **Tasking Quick Guide** + walkthrough videos,
+**Reviewer Feedback Form**, **office-hours times**, **pod-lead and roster names**. Drive top folder
+`1O3L1RdNdIqqZsbz40YP4-F4GWMXGIXCz`, Expert Facing `1CAmF3qH_tztHo6MfaUGlHAySvFT3OO80` — both live,
+so they go in rather than as TBDs. Bot-channel canvases NOT created (clone Panacea F0BHZGR71PA +
+F0BCS3YEKMM once those bots point at Lyceum).
+
 ## Fixed assets and constraints
 
 - Org chart image: Slack file `F0BHESJ76C9`, hosted via a message in #abacus-pod-a. Embedded by the Information Station canvas. Do not delete the hosting message.
