@@ -80,11 +80,24 @@ once the audiences exist, which is more reliable.
   which is NOT in that list, so treat the schema list as incomplete rather than
   authoritative.
 
+### The `slack` externalId you SEND is not the one you READ BACK
+
+**Send the bare channel id. The API prefixes the workspace URL itself.** Verified on Westwood
+2026-08-05: passing the full `https://app.slack.com/client/E09EQ48AGDV/C0BP60FLG8Y` stored
+`https://app.slack.com/client/E09EQ48AGDV/https://app.slack.com/client/E09EQ48AGDV/C0BP60FLG8Y`,
+a doubled value that resolves to nothing. It returns 200 and looks fine in the response until you
+read the `externalId` carefully, so this is a silent breakage.
+
+The table below is the **stored** shape, which is what every live vertical shows and what misled this
+skill into documenting it as the input shape. `slack` input is `C0BP60FLG8Y`; `google`,
+`insightful`, `studio` and `insightful_account` inputs are stored verbatim, so for those the two
+shapes coincide.
+
 `externalId` shapes, from Cadre's live targets:
 
-| targetType | externalId |
+| targetType | externalId (as STORED) |
 |---|---|
-| `slack` | `https://app.slack.com/client/<TEAM>/<CHANNEL_ID>` |
+| `slack` | `https://app.slack.com/client/<TEAM>/<CHANNEL_ID>` — **send only `<CHANNEL_ID>`** |
 | `google` | `<vertical>-<name>-XXXX@mercor.expert` |
 | `insightful` | `https://app.insightful.io/#/app/project/<account>/<project>` |
 | `studio` | the **Teams project id** (`proj_...`), with `name:"studio_campaign"` |
@@ -140,17 +153,23 @@ Cadre's team is `E09EQ48AGDV`; `#cadre-announcements` is `C0BL42735QV` and
 `#cadre-maven-support` is `C0BLEA2TNCR`. **Cadre's Everyone provisioning is DONE**
 as of 2026-07-28.
 
-### Care needed with `update_project_audience`
+### `update_project_audience` APPENDS targets. Verified 2026-08-05.
 
-Its `targets` parameter is nullable with default `null`, so omitting it leaves
-targets untouched. Whether passing an array **merges or replaces** is **not
-verified** — Cadre's targets were added through the Teams UI, which tells us nothing
-about the API's behaviour. Until someone confirms it:
+**Its own tool description says "optionally replace targets". It does not replace, it appends.**
+Confirmed twice on Westwood: passing the full intended list to repair one bad target produced
+duplicates of every target in that list, including a Google group added twice.
 
-1. Read the audience first and pass the **full intended list**, existing targets
-   included. That is correct under either semantics.
-2. Re-read afterward and confirm the target count went **UP**, not sideways.
-3. `delete_audience_target(audience_id, target_id)` removes one individually.
+So the old advice to "pass the full intended list, correct under either semantics" is **wrong and
+actively harmful**. Do this instead:
+
+1. **To ADD a target: pass ONLY the new target(s).** Existing ones survive untouched.
+2. **To FIX or REMOVE a target: `delete_audience_target(audience_id, target_id)`**, then add the
+   replacement. There is no in-place edit.
+3. **Re-read afterwards and count.** A repair attempt that appends leaves the broken target live
+   alongside the good one, which reads as working while half the rows are junk.
+
+`anchors` is required on every update, so pass the audience's existing anchors verbatim or you will
+change who the audience catches while trying to edit a target.
 
 ## Step 4: turn on auto-provisioned email
 
