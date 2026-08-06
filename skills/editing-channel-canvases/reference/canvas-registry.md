@@ -230,7 +230,7 @@ walkthrough videos, **Reviewer Feedback Form**, **office-hours times**, **pod-le
 Bot-channel canvases (#westwood-doctor-bot, #westwood-world-file-upload-bot) NOT created: clone Panacea
 /doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Westwood.
 
-## Lyceum canvases (Education vertical; workspace `Lyceum`, started 2026-08-05) — IN PROGRESS, 1 of 15
+## Lyceum canvases (Education vertical; workspace `Lyceum`, created 2026-08-05) — COMPLETE, 15 of 15
 
 Cloned from the **Westwood** set (newest complete 15, and the identical channel shape). Westwood→Lyceum,
 domain corporate finance→**education**. **Lyceum has NO roles defined yet** (Ryu deferred the roles/rates
