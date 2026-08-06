@@ -223,10 +223,34 @@ onboarding support, Welcome to Westwood (all three carry BOTH), Pod A + Informat
 and Key Links (both). Drive folders also live: top `103dQQjsSFd6RmZUaCLkn3rvr_7fXEo39`, Expert Facing
 `15RLM3zBIDbXFdhU9nP0IVb-tfsI0w6pw`.
 
-Still `(link TBD)` on Westwood: the **Instructions doc** (biggest unblock: 7 canvases), **bonus +
-reimbursement forms** (5 canvases), **EPM Training doc**, **Automations sheet**, **Expert Tracker**,
-**SSOT / Daily Syncs**, **Reviewer Guide**, **Review Tracker**, **Tasking Quick Guide** + the 5 task
-walkthrough videos, **Reviewer Feedback Form**, **office-hours times**, **pod-lead and roster names**.
+**LINK SWEEP DONE 2026-08-06 ~10:15am PT.** The instructions doc, both expert forms and the EPM
+Training doc were filled across 8 canvases. Live values, all verified from source that session:
+
+```
+Instructions   1SBKjvOXu_p9LWsHR5u_uvVcjFmO0Fka-TLUfvsgGW8c   "Project Westwood Instructions"
+               canonical form: /edit?tab=t.om7t8ifry962   ("Welcome to Westwood" tab)
+               FAQ tab: t.5ze4ic17px29   Phase 1 / World Building tab: t.c78r68yr1kim
+Bonus form     .../forms/d/e/1FAIpQLSfiJp4Uwl2i3XvM8ON2Z3OOTZym5XU2gGT2If1GdY5Q3lN54A/viewform
+Reimbursement  .../forms/d/e/1FAIpQLSdWToaqyk-HMeaW-1Z9U-kqSkrnOcpXbzE1YjFFdwqxr7b8ow/viewform
+EPM Training   1CE-4uS0fBftZ-4Zw6Z4fQfzAaxau4yiATJC5RfEVf6c   ([INT] folder, EPM canvases only)
+```
+
+Both form URLs are the `responderUri` from `forms.forms.get`, NOT the file-id or `/edit` shape, and
+both forms have a linked response sheet. Filled in: Key Links `F0BNFTRGSCC` (instructions + both
+forms), onboarding welcome `F0BNC7XPL82` (instructions + reimbursement), Pod A Start Here
+`F0BNC7QT1BL` (instructions + both forms), Reimbursements and Bonus Forms `F0BMWSE939D` (both forms),
+Information Station `F0BN8QQJDPF` (instructions + FAQ deep link), Welcome to Westwood `F0BN8RAPVGV`
+(instructions + reimbursement), Onboarding Support `F0BP6JHFLQ0` (instructions), EPM Start Here
+`F0BN602PXEX` (instructions + EPM Training doc).
+
+Not checked in that sweep, believed to carry none of these slots: `F0BNE57HFRP` EPM Roster,
+`F0BNE5V8KPB` Weekly Availability, `F0BNC87356W` Reviewer Roster, `F0BN61J6DGB` Announcements Start
+Here, `F0BN8RDPK53` Maven Support, `F0BMWTC1G07` Technical Issues.
+
+Still `(link TBD)` on Westwood, all blocked on assets that do not exist: **Automations sheet**,
+**Expert Tracker**, **SSOT / Daily Syncs**, **Reviewer Guide**, **Review Tracker**, **Tasking Quick
+Guide** + the 5 task walkthrough videos, **Reviewer Feedback Form**, **office-hours times**,
+**pod-lead and roster names**.
 Bot-channel canvases (#westwood-doctor-bot, #westwood-world-file-upload-bot) NOT created: clone Panacea
 /doc how-to F0BHZGR71PA + world-upload F0BCS3YEKMM once those bots point at Westwood.
 
@@ -298,8 +322,19 @@ Both are `_CLONEME`-template clones, so their CONTENT is still generic/unreviewe
 the third time a hand-retyped calendar URL has broken (Atria 2026-07-23, here twice-over), so copy the cid
 and the `.com` tail as one unit.
 
-Still `(link TBD)` on Lyceum after the build: **Instructions doc** (biggest unblock, 7 canvases), **bonus +
-reimbursement forms** (5 canvases), **Expert Tracker**,
+**Both form links FILLED 2026-08-06 ~10:20am PT** across the 6 canvases that carry them (Reimbursements
+and Bonus Forms F0BNERZUC1X, Key Links F0BNAUFKUMU, Announcements F0BNCSWUKU2, Pod A F0BN6L7UZ0T, Welcome
+to Lyceum F0BNATRPW8N, onboarding welcome F0BP773H908). Both URLs are `responderUri` from
+`forms.forms.get`, never `/edit`: bonus form file `1cqu_Jdb95h596lajUrUc7amY8oRaPHd9zz0zWN-9Rdo` →
+responder `1FAIpQLSe8TzDYBMzXtXF9o6g27i8_vAQR2ksyF4d80YNy-aFkItgu3g` (independently confirmed by the 301
+Location header Google returns for the file-id URL); reimbursement form file
+`1e2Do0cp1uJ5f2662-kL43sdcbz2ap54Ys5Lv9vdI2hQ` → responder
+`1FAIpQLSeCoh2-qlGO6Ky8pKTTMubrtCaslKTZJDaHqUVYAeK-wVX4rQ` (its file-id URL 401s unauthenticated, which is
+expected and not a defect). Both carry `?usp=sharing&ouid=114776486065354327206` to match Cadre/Abacus, and
+both report `isPublished` + `isAcceptingResponses` true with a linked response sheet.
+
+Still `(link TBD)` on Lyceum after the build: **Instructions doc** (biggest unblock, 7 canvases),
+**Expert Tracker**,
 **SSOT / Daily Syncs**, **Reviewer Guide**, **Tasking Quick Guide** + walkthrough videos,
 **Reviewer Feedback Form**, **office-hours times**, **pod-lead and roster names**. Drive top folder
 `1O3L1RdNdIqqZsbz40YP4-F4GWMXGIXCz`, Expert Facing `1CAmF3qH_tztHo6MfaUGlHAySvFT3OO80` — both live,
