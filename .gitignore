@@ -5,6 +5,10 @@
 /*
 !/.gitignore
 !/skills/
+# README.md is the one root doc that IS published: it is the landing page and the
+# install instructions, and a repo whose skills nobody can install is inert. It is
+# written to carry no ids, comp figures or internal links. Added 2026-08-07.
+!/README.md
 
 # Secrets. Never commit a real key; see each skill's *.env.example for the shape.
 spinup.env
