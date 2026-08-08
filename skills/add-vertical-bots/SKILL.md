@@ -48,7 +48,7 @@ Ask for, and confirm, all of these before touching code:
 **Read the Vercel protection-bypass secret yourself; never ask the human to paste it.** The doctor bot's three Request URLs each carry `?x-vercel-protection-bypass=<secret>`, and this used to ship as a `YOUR_BYPASS_SECRET` placeholder the human hand-edited into three separate Slack fields per app. Instead:
 
 ```bash
-set -a; . ~/Desktop/MERCOR/.env.local; set +a   # never echo the value
+set -a; . ~/.claude/credentials/spinup.env; set +a   # never echo the value
 [ -n "$VERCEL_PROTECTION_BYPASS" ] && echo "bypass: present (${#VERCEL_PROTECTION_BYPASS} chars)" || echo "bypass: MISSING"
 ```
 
@@ -116,7 +116,7 @@ In `~/Desktop/MERCOR/panacea-world-upload-bot` (template = the last `feat(<verti
    **Read the id live, never from notes or another vertical's list:**
 
    ```bash
-   set -a; . ~/Desktop/MERCOR/.env.local; set +a   # RLS_API_KEY, never echoed
+   set -a; . ~/.claude/credentials/spinup.env; set +a   # RLS_API_KEY, never echoed
    CAMP=<camp_id>
    curl -s "https://api.studio.mercor.com/worlds/?campaign_id=$CAMP" \
      -H "Authorization: Bearer $RLS_API_KEY" -H "X-Campaign-Id: $CAMP" \

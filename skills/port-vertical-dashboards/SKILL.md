@@ -53,7 +53,7 @@ both can silently destroy a vertical's dashboards if you miss them.
 ## Run order
 
 ```bash
-set -a; . ~/Desktop/MERCOR/.env.local; set +a     # RLS_API_KEY, never echoed
+set -a; . ~/.claude/credentials/spinup.env; set +a     # RLS_API_KEY, never echoed
 
 # 1. what does the source have, and what does the target have to lose?
 port_vertical_dashboards.py list <source_campaign_id>

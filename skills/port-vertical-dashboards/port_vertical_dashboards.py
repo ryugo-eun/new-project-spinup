@@ -5,8 +5,8 @@ A Studio "dashboard" is a `custom query view`: one saved SQL query rendered as a
 stored per campaign. A freshly cloned vertical gets NONE of them, so its reviewers open
 Studio and see nothing, while the source vertical has a full pipeline-stage set.
 
-Auth: reads RLS_API_KEY from the environment (source ~/Desktop/MERCOR/.env.local first:
-`set -a; . ~/Desktop/MERCOR/.env.local; set +a`). Never prints the key. Company/account
+Auth: reads RLS_API_KEY from the environment (source ~/.claude/credentials/spinup.env first:
+`set -a; . ~/.claude/credentials/spinup.env; set +a`). Never prints the key. Company/account
 default to the shared Sparta Studio ids; override with RLS_COMPANY_ID / RLS_ACCOUNT_ID.
 Base URL: RLS_BASE_URL (default prod).
 

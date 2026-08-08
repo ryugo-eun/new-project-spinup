@@ -82,8 +82,8 @@ and items 2 and 4 are one-line link swaps. That is worth doing and is not done y
 ## 0. Prereqs
 
 - `RLS_API_KEY` must reach the TARGET and the SOURCE campaign. Use a BROAD / Okta-forwarded key,
-  never a single-campaign key. It lives in `~/Desktop/MERCOR/.env.local`; load with
-  `set -a; . ~/Desktop/MERCOR/.env.local; set +a` and never print it.
+  never a single-campaign key. It lives in `~/.claude/credentials/spinup.env`; load with
+  `set -a; . ~/.claude/credentials/spinup.env; set +a` and never print it.
 - Confirm the key works: `GET /campaigns/` returns rows. A 403 means the key is scoped, so stop.
 - **The human must have cloned the campaign already.** Adopt mode has nothing to adopt otherwise,
   and it will tell you so.
@@ -128,7 +128,7 @@ Do not skip the interview and assume the default source.
 ## 2. Run it
 
 ```bash
-set -a; . ~/Desktop/MERCOR/.env.local; set +a
+set -a; . ~/.claude/credentials/spinup.env; set +a
 export RLS_COMPANY_ID=comp_2fa4115109d741cd94a3c409ed89e61f RLS_ACCOUNT_ID=acct_be8f7fcc2c554b33baa5a0c9d05496e3
 export SPARTA_TARGET_CAMPAIGN="<answer 1>" SPARTA_TARGET_ENV_ID="<answer 3, required>"
 python3 clone_sparta_campaign.py --dry-run     # inventory + every write, touches nothing

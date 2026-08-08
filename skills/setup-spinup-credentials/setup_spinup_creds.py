@@ -136,44 +136,65 @@ def check_write_scope(key, campaigns, pinned=None):
     before and after (490,488 bytes, identical checksum). The API rejects the body
     before touching the record, so nothing is mutated.
     """
-    # The probe needs a campaign that actually HAS a world. Testing only the first
-    # reachable campaign is how this check silently skipped itself: a broad key's
-    # first campaign was an empty test project, so the most valuable validation in
-    # this script never ran and the run still looked clean. Scan until one yields.
+    # Two separate reasons a probe can come back useless, and they must not be
+    # confused with each other:
+    #   * the campaign has no world to probe against;
+    #   * the caller lacks the ROLE to write on that particular campaign, which
+    #     says nothing about the KEY's scope.
+    # Testing only the first campaign hit both: once an empty test project (the
+    # check silently skipped itself and still printed clean), once a campaign the
+    # operator had no write role on (reported "inconclusive" for a perfectly good
+    # key). So scan on, and only stop early on a verdict that is truly about the key.
     candidates = [pinned] if pinned else [c for c in campaigns if not c.get("archived_at")]
-    target = world_id = None
+    tried = 0
+    last = None
     for c in candidates[:25]:
         camp, comp = c["campaign_id"], c["company_id"]
         status, body = api(f"/worlds/?campaign_id={camp}", key, campaign=camp, company=comp)
         # GET /worlds/ returns {"worlds": [...]}, NOT a bare list. Treating it as a
         # list made this probe skip itself on a campaign with 43 worlds.
         worlds = body.get("worlds", []) if isinstance(body, dict) else body
-        if status == 200 and isinstance(worlds, list) and worlds:
-            target, world_id = c, worlds[0].get("world_id")
-            break
-    if not target or not world_id:
+        if status != 200 or not isinstance(worlds, list) or not worlds:
+            continue
+        world_id = worlds[0].get("world_id")
+        if not world_id:
+            continue
+
+        tried += 1
+        status, body = api(
+            f"/worlds/{world_id}", key, method="PATCH", body={}, campaign=camp, company=comp
+        )
+        detail = body.get("detail", "") if isinstance(body, dict) else str(body)
+        last = (c.get("campaign_name"), status, detail)
+
+        if status == 400 and "at least one field" in detail.lower():
+            ok(f"key has WRITE access (probed on {c.get('campaign_name')}, nothing modified)")
+            return True
+        if status == 403 and "read" in detail.lower() and "access" in detail.lower():
+            # This one IS about the key, so stop: no other campaign will differ.
+            bad(
+                "key is READ-ONLY. Every step through 5b will 403 on its first PATCH.\n"
+                "        Mint a new key in Studio with write access and re-run."
+            )
+            return False
+        # Anything else (role permissions, a locked world) is campaign-specific.
+        # Keep looking for a campaign this operator can actually write on.
+
+    if tried == 0:
         warn(
             "no reachable campaign has a world yet, so write scope could NOT be tested. "
             "This is expected before runbook step 4. Re-run after the campaign is cloned:\n"
             "        python3 setup_spinup_creds.py --check"
         )
         return None
-    camp, comp = target["campaign_id"], target["company_id"]
-    status, body = api(
-        f"/worlds/{world_id}", key, method="PATCH", body={}, campaign=camp, company=comp
+    name, status, detail = last
+    warn(
+        f"write scope UNPROVEN after {tried} campaign(s). The key is not provably "
+        f"read-only, but nothing confirmed it can write either.\n"
+        f"        Last was {name}: HTTP {status} {detail[:90]}\n"
+        f"        Re-run with --campaign <YourVertical> once its campaign exists; that is "
+        f"the only campaign whose answer matters."
     )
-    detail = body.get("detail", "") if isinstance(body, dict) else str(body)
-
-    if status == 400 and "at least one field" in detail.lower():
-        ok(f"key has WRITE access (probed on {target.get('campaign_name')}, nothing modified)")
-        return True
-    if status == 403 and "read" in detail.lower():
-        bad(
-            "key is READ-ONLY. Every step through 5b will 403 on its first PATCH.\n"
-            "        Mint a new key in Studio with write access and re-run."
-        )
-        return False
-    warn(f"write probe inconclusive: HTTP {status} {detail[:120]}")
     return None
 
 

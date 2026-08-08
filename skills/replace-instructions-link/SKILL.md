@@ -109,7 +109,7 @@ The `instructions_card` modules in `world_settings.module_layout` and `module_la
 `[LIVE] Golden World Building`.
 
 ```
-set -a; . ~/Desktop/MERCOR/.env.local; set +a
+set -a; . ~/.claude/credentials/spinup.env; set +a
 python3 replace_instructions_link.py scan <campaign_id> <old_doc_id>
 python3 replace_instructions_link.py replace <world_id> <campaign_id> <old> <new> --dry-run
 python3 replace_instructions_link.py replace <world_id> <campaign_id> <old> <new>

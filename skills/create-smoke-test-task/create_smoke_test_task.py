@@ -20,7 +20,7 @@ the world files were actually mounted in the container. "The API returned 200" i
 against an unpopulated volume also returns 200 and completes, and that is the exact failure this
 test exists to catch.
 
-Auth: RLS_API_KEY must have WRITE scope on the campaign (~/Desktop/MERCOR/.env.local).
+Auth: RLS_API_KEY must have WRITE scope on the campaign (~/.claude/credentials/spinup.env).
 Transport: curl. Studio is behind Cloudflare, which 403s Python urllib.
 """
 import argparse, datetime, json, os, re, subprocess, sys, time, zipfile

@@ -63,7 +63,7 @@ wrong.
 ## Run it
 
 ```bash
-set -a; . ~/Desktop/MERCOR/.env.local; set +a     # RLS_API_KEY, write-scoped
+set -a; . ~/.claude/credentials/spinup.env; set +a     # RLS_API_KEY, write-scoped
 
 # 1. what is it on now
 python restamp_taiga_env.py --campaign camp_xxx --inventory

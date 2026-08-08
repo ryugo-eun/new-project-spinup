@@ -32,7 +32,7 @@ ambiguous between the campaign and the task. Held fixed, **a failure is always t
 ## Run it
 
 ```bash
-set -a; . ~/Desktop/MERCOR/.env.local; set +a          # RLS_API_KEY, write-scoped
+set -a; . ~/.claude/credentials/spinup.env; set +a          # RLS_API_KEY, write-scoped
 
 python create_smoke_test_task.py --campaign camp_xxx --all
 ```

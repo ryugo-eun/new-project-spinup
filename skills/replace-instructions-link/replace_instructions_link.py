@@ -6,8 +6,8 @@ Cloned Sparta worlds inherit the OLD Vigil instructions Google-Doc link inside
 module_layout_draft. This tool finds an old string (a Google-Doc ID, or a full
 URL) and replaces it with the vertical's own, preserving all other world_settings.
 
-Auth: reads RLS_API_KEY from the environment (source ~/Desktop/MERCOR/.env.local
-first: `set -a; . ~/Desktop/MERCOR/.env.local; set +a`). Never prints the key.
+Auth: reads RLS_API_KEY from the environment (source ~/.claude/credentials/spinup.env
+first: `set -a; . ~/.claude/credentials/spinup.env; set +a`). Never prints the key.
 Company/account default to the shared Sparta Studio ids; override with
 RLS_COMPANY_ID / RLS_ACCOUNT_ID. Base URL: RLS_BASE_URL (default prod).
 
