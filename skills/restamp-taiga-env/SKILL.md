@@ -113,6 +113,11 @@ Write access is the thing that bites. Verified against Delphi:
 | `panacea-cli/.env`, `panacea-cli/studio-rls.env`, `panacea-workspace/.env` | 403 on GET, campaign-scoped elsewhere |
 | `Sparta Verticals/Studio Bulk Updates/studio_write_key.env` | 401, expired |
 
+That table records which key SOURCE worked when it was tested, so the paths in it are left as
+found. **The canonical home is now `~/.claude/credentials/spinup.env`**, written by the
+`setup-spinup-credentials` skill (runbook step 0), which proves write scope up front instead
+of leaving you to discover it on the first PATCH like the row above did.
+
 ## Known env ids
 
 | Vertical | Taiga env |
