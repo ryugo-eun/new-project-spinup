@@ -121,11 +121,23 @@ credentials are for the day-to-day ops skills (`run-in-taiga`, `trigger-taiga-qc
 
 ## Where the other skills read from
 
-The rest of the spinup set was written against `~/Desktop/MERCOR/.env.local`, and one ops
-skill (`run-in-taiga`) reads `~/.claude/credentials/panacea.env`, which does not exist on any
-machine checked. `~/.claude/credentials/spinup.env` is the single home going forward, chosen
-because `~/.claude/credentials/` is already the convention for `taiga_oauth.json`, is outside
-every git repo, and does not assume a `~/Desktop/MERCOR` tree.
+**All six spinup skills that used to read `~/Desktop/MERCOR/.env.local` were repointed here
+on 2026-08-07**: `add-vertical-bots`, `clone-sparta-campaign`, `create-smoke-test-task`,
+`port-vertical-dashboards`, `replace-instructions-link`, `restamp-taiga-env`, plus the three
+Python entrypoints' header docs. `~/.claude/credentials/spinup.env` was chosen because
+`~/.claude/credentials/` is already the convention for `taiga_oauth.json`, sits outside every
+git repo, and does not assume a `~/Desktop/MERCOR` tree exists.
+
+Two references to the old path survive on purpose: `restamp-taiga-env`'s "Key scope" table is
+a factual record of which key SOURCE worked when it was tested, not an instruction, and
+rewriting it would falsify the finding.
+
+**Still outstanding:** six ops skills (`run-in-taiga`, `run-autoqc`, `trigger-taiga-qc`,
+`fetch-taiga-qc-result`, `sync-to-external-storage`, `upload-task-files-to-studio`) plus
+`start-task-iteration` read `~/.claude/credentials/panacea.env`, which does not exist on any
+machine checked. They are day-to-day Panacea ops, not spinup, so they were left alone rather
+than repointed blind: their campaign pinning differs and changing it untested could send a
+write at the wrong campaign.
 
 Loading it is the same one-liner everywhere:
 
